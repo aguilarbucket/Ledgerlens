@@ -65,6 +65,14 @@ def test_openai_client_can_disable_sdk_retries(monkeypatch) -> None:
     assert captured["max_retries"] == 0
 
 
+def test_openai_client_requires_api_key(monkeypatch) -> None:
+    monkeypatch.setattr(openai_client_module, "load_project_environment", lambda: False)
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+
+    with pytest.raises(openai_client_module.OpenAIConfigurationError, match="not configured"):
+        OpenAIResponsesClient()
+
+
 def test_openai_client_uses_structured_pdf_request_without_network() -> None:
     extraction = FixtureInvoiceExtractor().extract(validated_pdf())
     responses = FakeResponses(extraction)

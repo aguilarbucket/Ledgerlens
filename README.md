@@ -1,88 +1,180 @@
 # LedgerLens
 
 LedgerLens is an AI-assisted portfolio ledger that turns brokerage invoices into human-verified
-purchase records and factual portfolio intelligence. The initial audience is retail investors
-tracking CLP-denominated equity portfolios.
+purchase records and factual daily and weekly portfolio intelligence. It is designed for retail
+investors tracking CLP-denominated Chilean equity portfolios.
 
-This repository is the OpenAI Build Week extension of a pre-existing Streamlit tracker. Only
-work added for Build Week is evaluated here; the baseline is documented in
-`docs/PREEXISTING_BASELINE.md`.
+This repository is the independent OpenAI Build Week 2026 extension of a pre-existing Streamlit
+tracker. The earlier baseline and the new work are separated in
+[`docs/PREEXISTING_BASELINE.md`](docs/PREEXISTING_BASELINE.md) and
+[`docs/BUILD_WEEK_CHANGELOG.md`](docs/BUILD_WEEK_CHANGELOG.md).
 
-## Current product flow
+## The problem and solution
 
-The implemented flow is fully usable without credentials:
+Brokerage invoices are useful evidence but do not automatically form a trustworthy, explainable
+portfolio ledger. LedgerLens validates a PDF, extracts a typed draft, requires a person to review
+and confirm every saved record, calculates portfolio metrics deterministically in Python, and then
+uses GPT-5.6 only to describe supplied facts.
 
-`synthetic PDF -> validation -> structured fixture extraction -> editable preview -> explicit
-confirmation -> deterministic portfolio`
+The complete judge path works offline with fictional data and no external credentials.
 
-The fixture extraction is clearly labeled and makes no model request. If `OPENAI_API_KEY` is
-configured, the same validated PDF and typed response model can be sent through the official
-Responses API. The uploaded PDF is processed in memory and is not persisted; LedgerLens retains
-only its SHA-256 with the confirmed purchase for traceability.
+```text
+synthetic PDF -> validation -> typed extraction -> editable review -> explicit confirmation
+              -> SQLite ledger -> deterministic analytics -> Daily Lens / Weekly Lens
+```
 
-Portfolio analytics demonstrate weighted average cost, current value, unrealized P/L, allocation,
-missing-price handling, and price coverage without external credentials.
+## Features
 
-Daily Lens and Weekly Lens are also implemented from a synthetic historical price series. Python
-calculates price contributions, comparable-period movement, concentration, distribution shift,
-best/worst observable day, additions, invoice completeness, stale prices, and context quality.
-Both reports have a deterministic offline narrative and an optional guarded OpenAI narrative.
+- Fully synthetic portfolio, price history, companies, broker, and one-page brokerage invoice.
+- PDF extension, MIME, size, signature, and EOF validation.
+- Offline fixture extraction and optional GPT-5.6 structured extraction through the Responses API.
+- Editable preview, field-level confidence, warnings, and mandatory human confirmation.
+- SHA-256 document traceability without retaining uploaded PDF bytes.
+- Weighted average cost, current value, allocation, price coverage, and unrealized P/L.
+- Daily and weekly price contributions, comparable periods, concentration, distribution shift,
+  best/worst observable day, missing/stale prices, and context quality.
+- Deterministic offline narratives plus optional guarded GPT-5.6 narratives.
+- Local SQLite persistence, automated tests, and a reproducible Docker image.
+
+## Architecture
+
+Financial truth and generated language are deliberately separated:
+
+- `ledgerlens/domain`: typed purchase and market records.
+- `ledgerlens/data`: SQLite persistence and synthetic seed synchronization.
+- `ledgerlens/market`: fixture and optional yfinance providers.
+- `ledgerlens/analytics`: deterministic financial and historical calculations.
+- `ledgerlens/invoices`: PDF validation, extraction schemas, and confirmation rules.
+- `ledgerlens/ai`: one centralized Responses API client; no financial calculations.
+- `ledgerlens/analysts`: Daily/Weekly narrative orchestration and guardrails.
+- `app.py`: Streamlit composition and human review workflow.
+
+See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for calculation and persistence boundaries.
 
 ## Run locally
 
-```bash
+Python 3.11 or newer is required. Python 3.13 is used by the Docker image.
+
+Windows PowerShell:
+
+```powershell
 python -m venv .venv
-.venv\Scripts\activate
+.\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements-dev.txt
 streamlit run app.py
 ```
 
-The default demo creates a local ignored database under `runtime/`. All displayed data is
-fictional. A polished synthetic PDF is available at
-`output/pdf/ledgerlens_synthetic_invoice.pdf`.
+macOS or Linux:
 
-## Test
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-dev.txt
+streamlit run app.py
+```
+
+Open `http://localhost:8501`. The default creates an ignored database at
+`runtime/ledgerlens.db`. All displayed records and market prices are fictional.
+
+## Run with Docker
+
+No API key is needed for the reproducible judge path.
+
+```bash
+docker build -t ledgerlens-buildweek:p0 .
+docker run --rm -p 8501:8501 ledgerlens-buildweek:p0
+```
+
+The container runs as an unprivileged user, includes a health check, and excludes local
+credentials, databases, logs, private PDFs, CSV files, and virtual environments from its build
+context.
+
+## Environment variables
+
+Copy `.env.example` to the ignored `.env` only when live OpenAI features are required.
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `OPENAI_API_KEY` | unset | Optional live Responses API authentication. |
+| `OPENAI_MODEL` | `gpt-5.6` | Exact model used for live extraction and narratives. |
+| `LEDGERLENS_DEMO_MODE` | `true` | Keeps this Build Week slice on synthetic data. |
+| `LEDGERLENS_DATABASE_PATH` | `runtime/ledgerlens.db` | Local SQLite database location. |
+| `LEDGERLENS_MAX_PDF_MB` | `10` | Maximum accepted upload size. |
+
+Missing credentials never block the offline demo. Live invoice extraction fails explicitly;
+Daily and Weekly Lens show a clearly labeled deterministic fallback. LedgerLens never silently
+switches to another model.
+
+## Test and verification
 
 ```bash
 python -m pytest
 python -m ruff check .
+python -m compileall -q app.py ledgerlens sample_data scripts tests
 ```
 
-The optional live smoke check is explicitly billable and uses only the bundled synthetic data:
+The optional live smoke test is billable, uses only bundled synthetic inputs, disables automatic
+SDK retries, and makes at most three API attempts:
 
 ```bash
 python -m scripts.validate_openai_live --confirm-live
 ```
 
-## Environment
+See [`docs/TESTING.md`](docs/TESTING.md) and
+[`docs/P0_VERIFICATION.md`](docs/P0_VERIFICATION.md) for the verified matrix and exact boundaries.
 
-Copy `.env.example` to `.env` only when live integrations are ready. Never commit `.env`.
-`OPENAI_API_KEY` is not required for fixture extraction. Selecting OpenAI mode without a key fails
-explicitly and never silently falls back to another model or saves a purchase.
+## Five-minute judge path
 
-## Privacy and financial boundaries
+1. Start the app without an API key and confirm the synthetic-data banner.
+2. In **Import purchase**, download and upload the bundled synthetic invoice.
+3. Use **Offline fixture**, validate the PDF, and inspect the editable typed preview.
+4. Show that saving is rejected until the explicit confirmation checkbox is selected.
+5. Confirm the record and inspect the updated ledger plus truncated document hash.
+6. Open **Daily Lens** and **Weekly Lens** and compare their deterministic KPIs and narrative
+   source labels.
+7. Optionally explain the already-validated GPT-5.6 path; judges do not need a credential.
 
-- No real portfolio, invoice, account, Telegram identifier, or private-system export belongs in
-  this repository.
-- AI will not calculate financial metrics, choose saved records, predict prices, or recommend
-  buying, selling, or holding.
-- LedgerLens currently records purchases only. It reports unrealized P/L, not realized gains.
-- Generated analysis is descriptive and is not financial advice.
+The concise recording sequence is in [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md).
 
-## Planned Build Week flow
+## GPT-5.6 and human control
 
-1. Upload a fully synthetic brokerage PDF. **Implemented.**
-2. Extract typed fields using a fixture or GPT-5.6 through the Responses API. **Implemented and
-   validated live with the synthetic PDF.**
-3. Review and edit the preview. **Implemented.**
-4. Save only after explicit human confirmation. **Implemented.**
-5. Recalculate the portfolio deterministically. **Implemented.**
-6. Generate factual Daily Lens and Weekly Lens narratives. **Implemented with offline fallback and
-   validated live through their financial-language guardrails.**
+LedgerLens uses GPT-5.6 through the official Responses API for two bounded tasks: extracting a
+strict invoice draft and writing short descriptions of Python-calculated KPI contexts. Requests
+use `store=False`. The model does not calculate portfolio values, decide what to save, infer
+missing money values, recommend trades, predict prices, or invent causes.
 
-## Codex collaboration
+A human must review and confirm an extraction before it becomes a purchase. The uploaded PDF is
+processed in memory and is not persisted.
 
-Codex is being used in the main project session to audit the baseline, design the architecture,
-implement and test the extension, and prepare privacy and judge documentation. The human owner
-defines product scope, confirms provenance, controls credentials, and authorizes any future
-publication or deployment.
+## Privacy and security
+
+- Only synthetic data belongs in the repository, tests, screenshots, and demo.
+- `.gitignore` and `.dockerignore` exclude credentials, runtime databases, invoices, CSV files,
+  backups, logs, caches, and temporary data.
+- No private system is imported or required; Telegram is absent from the P0 runtime.
+- API keys are read only from the process environment or ignored local `.env` and are never logged.
+- No repository remote, publication, deployment, or external service connection is required.
+
+## Limitations
+
+- Purchases are supported; sales, realized gains, tax accounting, and closed-position returns are
+  not implemented.
+- The public demo uses synthetic CLP prices and is not a source of live market truth.
+- yfinance is an optional adapter and is not used by the offline app or tests.
+- There is no multi-user authentication, banking integration, trading automation, price forecast,
+  portfolio optimization, news feed, or personalized advice.
+
+## Codex collaboration and human decisions
+
+Codex was used in the primary project session to audit the baseline, design the modular extension,
+implement and test the Build Week work, validate the GPT-5.6 integration, and prepare judge-facing
+documentation. The human owner established provenance, confirmed that July 18 baseline work was
+security/framework maintenance, selected the product scope, authorized the independent sanitized
+directory, controlled the API credential and usage limit, and retains authority over publication,
+licensing, deployment, and submission.
+
+## Financial disclaimer
+
+LedgerLens is descriptive demonstration software, not financial, investment, tax, or legal advice.
+All portfolio values and entities in the demo are fictional. Reported P/L is unrealized because the
+current product records purchases, not sales.

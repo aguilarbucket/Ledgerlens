@@ -12,7 +12,7 @@ LedgerLens separates financial truth from generated narrative.
    parsing, configurable model/timeout, and metadata-only logging.
 8. Streamlit owns editable preview state; the repository rejects any workflow that has not passed
    explicit human confirmation.
-9. Analyst modules will receive structured deterministic context and may only produce narrative.
+9. Analyst modules receive structured deterministic context and may only produce narrative.
 
 Historical intelligence uses timestamped fixture prices and confirmed purchases to construct
 comparable snapshots. Market movement excludes the cash effect of purchases made inside the

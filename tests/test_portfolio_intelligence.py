@@ -1,6 +1,8 @@
 from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 
+from ledgerlens.analysts.daily import deterministic_daily_narrative
+from ledgerlens.analysts.weekly import deterministic_weekly_narrative
 from ledgerlens.analytics.portfolio_intelligence import (
     build_daily_context,
     build_weekly_context,
@@ -71,3 +73,34 @@ def test_weekly_context_compares_prior_week_and_baseline() -> None:
     assert context.positions_added == ("AUST.SN",)
     assert context.missing_invoices == 0
     assert context.context_quality == "good"
+
+
+def test_daily_context_is_explicit_when_comparable_prices_are_insufficient() -> None:
+    history = demo_price_history()
+    context = build_daily_context(
+        demo_purchases(),
+        {REPORT_DATE: history[REPORT_DATE]},
+        report_date=REPORT_DATE,
+        as_of=AS_OF,
+    )
+
+    assert context.daily_change_clp is None
+    assert context.context_quality == "insufficient"
+    assert "comparable prices are insufficient" in deterministic_daily_narrative(context)
+
+
+def test_weekly_context_is_explicit_when_historical_baseline_is_missing() -> None:
+    current_week_start = date(2026, 7, 13)
+    history = {
+        price_date: prices
+        for price_date, prices in demo_price_history().items()
+        if price_date >= current_week_start
+    }
+    context = build_weekly_context(
+        demo_purchases(), history, report_date=REPORT_DATE, as_of=AS_OF
+    )
+
+    assert context.baseline_weeks == 0
+    assert context.baseline_average_change_clp is None
+    assert context.context_quality == "insufficient"
+    assert "Historical baseline is insufficient" in deterministic_weekly_narrative(context)
