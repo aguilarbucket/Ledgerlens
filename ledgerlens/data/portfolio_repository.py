@@ -108,5 +108,46 @@ class SQLitePortfolioRepository:
             for purchase in purchases:
                 self.add_purchase(purchase)
 
+    def sync_synthetic_seed(self, purchases: list[Purchase]) -> None:
+        for purchase in purchases:
+            if purchase.source != "synthetic":
+                raise ValueError("Only synthetic seed records may be synchronized.")
+            self._connection.execute(
+                """
+                INSERT INTO purchases (
+                    id, company, ticker, quantity, unit_price_clp, purchase_date,
+                    platform, currency, document_reference, source, confirmed_at,
+                    document_sha256
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(id) DO UPDATE SET
+                    company=excluded.company,
+                    ticker=excluded.ticker,
+                    quantity=excluded.quantity,
+                    unit_price_clp=excluded.unit_price_clp,
+                    purchase_date=excluded.purchase_date,
+                    platform=excluded.platform,
+                    currency=excluded.currency,
+                    document_reference=excluded.document_reference,
+                    confirmed_at=excluded.confirmed_at,
+                    document_sha256=excluded.document_sha256
+                WHERE purchases.source = 'synthetic'
+                """,
+                (
+                    purchase.id,
+                    purchase.company,
+                    purchase.ticker,
+                    str(purchase.quantity),
+                    str(purchase.unit_price_clp),
+                    purchase.purchase_date.isoformat(),
+                    purchase.platform,
+                    purchase.currency,
+                    purchase.document_reference,
+                    purchase.source,
+                    purchase.confirmed_at.isoformat() if purchase.confirmed_at else None,
+                    purchase.document_sha256,
+                ),
+            )
+        self._connection.commit()
+
     def close(self) -> None:
         self._connection.close()

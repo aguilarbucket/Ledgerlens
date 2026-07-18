@@ -81,3 +81,34 @@ class OpenAIResponsesClient:
                 status,
             )
 
+    def generate_text(
+        self,
+        *,
+        instructions: str,
+        input_text: str,
+        max_output_tokens: int,
+    ) -> str:
+        started = time.perf_counter()
+        status = "error"
+        try:
+            response = self._client.responses.create(
+                model=self.model,
+                store=False,
+                instructions=instructions,
+                input=input_text,
+                max_output_tokens=max_output_tokens,
+                timeout=self.timeout_seconds,
+            )
+            text = response.output_text.strip() if response.output_text else ""
+            if not text:
+                raise OpenAIResponseError("OpenAI returned no analyst narrative.")
+            status = "ok"
+            return text
+        finally:
+            logger.info(
+                "OpenAI response model=%s latency_seconds=%.3f status=%s",
+                self.model,
+                time.perf_counter() - started,
+                status,
+            )
+

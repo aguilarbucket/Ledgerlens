@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from datetime import date
+from datetime import UTC, date, datetime
 from decimal import Decimal
 from pathlib import Path
 
@@ -9,13 +9,20 @@ import streamlit as st
 
 from ledgerlens.ai.invoice_extractor import FixtureInvoiceExtractor, OpenAIInvoiceExtractor
 from ledgerlens.ai.openai_client import OpenAIConfigurationError, OpenAIResponsesClient
+from ledgerlens.analysts.daily import build_daily_report
+from ledgerlens.analysts.narrator import OpenAINarrativeProvider
+from ledgerlens.analysts.weekly import build_weekly_report
+from ledgerlens.analytics.portfolio_intelligence import (
+    build_daily_context,
+    build_weekly_context,
+)
 from ledgerlens.analytics.portfolio_metrics import calculate_portfolio_metrics
 from ledgerlens.data.portfolio_repository import SQLitePortfolioRepository
 from ledgerlens.invoices.confirmation import confirm_extraction
 from ledgerlens.invoices.models import InvoiceExtraction
 from ledgerlens.invoices.pdf_validation import PDFValidationError, validate_pdf
 from ledgerlens.market.market_data_provider import FixtureMarketDataProvider
-from sample_data.demo_data import demo_prices, demo_purchases
+from sample_data.demo_data import demo_price_history, demo_prices, demo_purchases
 
 
 def clp(value: Decimal | None) -> str:
@@ -39,7 +46,7 @@ if not demo_mode:
 
 database_path = Path(os.getenv("LEDGERLENS_DATABASE_PATH", "runtime/ledgerlens.db"))
 repository = SQLitePortfolioRepository(database_path)
-repository.seed_if_empty(demo_purchases())
+repository.sync_synthetic_seed(demo_purchases())
 purchases = repository.list_purchases()
 provider = FixtureMarketDataProvider(demo_prices())
 prices = provider.get_prices({purchase.ticker for purchase in purchases})
@@ -50,8 +57,8 @@ st.info(
     "This is descriptive software, not financial advice."
 )
 
-portfolio_tab, import_tab, history_tab, about_tab = st.tabs(
-    ["Portfolio", "Import purchase", "Purchase history", "About"]
+portfolio_tab, import_tab, history_tab, insights_tab, about_tab = st.tabs(
+    ["Portfolio", "Import purchase", "Purchase history", "AI Insights", "About"]
 )
 
 with portfolio_tab:
@@ -150,9 +157,7 @@ with import_tab:
         with st.form("invoice_confirmation_form"):
             company = st.text_input("Company", value=preview.company)
             ticker = st.text_input("Ticker", value=preview.ticker)
-            quantity = st.number_input(
-                "Quantity", min_value=1, value=preview.quantity, step=1
-            )
+            quantity = st.number_input("Quantity", min_value=1, value=preview.quantity, step=1)
             unit_price = st.number_input(
                 "Unit price (CLP)", min_value=1, value=preview.unit_price, step=1
             )
@@ -165,9 +170,7 @@ with import_tab:
             reviewed = st.checkbox(
                 "I reviewed these fields and explicitly confirm this purchase record."
             )
-            save_purchase = st.form_submit_button(
-                "Confirm and save purchase", type="primary"
-            )
+            save_purchase = st.form_submit_button("Confirm and save purchase", type="primary")
 
         with st.expander("Field confidence"):
             st.json(preview.confidence.model_dump())
@@ -226,6 +229,131 @@ with history_tab:
         hide_index=True,
         width="stretch",
     )
+
+with insights_tab:
+    st.subheader("Portfolio intelligence")
+    st.caption(
+        "Reproducible analysis date: 2026-07-18. All KPIs are calculated in Python from "
+        "synthetic price history."
+    )
+    narrative_mode = st.radio(
+        "Narrative mode",
+        ["Deterministic offline", "OpenAI Responses API"],
+        horizontal=True,
+        key="analyst_narrative_mode",
+    )
+    narrator = None
+    configuration_warning = None
+    if narrative_mode == "OpenAI Responses API":
+        try:
+            narrator = OpenAINarrativeProvider(OpenAIResponsesClient())
+        except OpenAIConfigurationError as exc:
+            configuration_warning = str(exc)
+    if configuration_warning:
+        st.warning(
+            configuration_warning
+            + " Deterministic reports are shown; no external request was attempted."
+        )
+
+    intelligence_date = date(2026, 7, 18)
+    intelligence_as_of = datetime(2026, 7, 18, 21, 0, tzinfo=UTC)
+    history = demo_price_history()
+    daily_context = build_daily_context(
+        purchases,
+        history,
+        report_date=intelligence_date,
+        as_of=intelligence_as_of,
+    )
+    weekly_context = build_weekly_context(
+        purchases,
+        history,
+        report_date=intelligence_date,
+        as_of=intelligence_as_of,
+    )
+    daily_report = build_daily_report(daily_context, narrator)
+    weekly_report = build_weekly_report(weekly_context, narrator)
+
+    daily_tab, weekly_tab = st.tabs(["Daily Lens", "Weekly Lens"])
+    with daily_tab:
+        daily_one, daily_two, daily_three, daily_four = st.columns(4)
+        daily_one.metric("Portfolio value", clp(daily_context.current_value_clp))
+        daily_two.metric(
+            "Daily observable movement",
+            clp(daily_context.daily_change_clp),
+            percent(daily_context.daily_change_pct),
+        )
+        daily_three.metric("Unrealized P/L", clp(daily_context.unrealized_pnl_clp))
+        daily_four.metric("Price coverage", percent(daily_context.price_coverage_pct))
+        st.markdown(daily_report.text)
+        st.caption(f"Narrative source: {daily_report.source}")
+        if daily_report.warning:
+            st.warning(daily_report.warning)
+        st.dataframe(
+            [
+                {"Ticker": item.ticker, "Daily contribution": clp(item.amount_clp)}
+                for item in daily_context.contributions
+            ],
+            hide_index=True,
+            width="stretch",
+        )
+        if daily_context.missing_price_tickers:
+            st.warning("Missing prices: " + ", ".join(daily_context.missing_price_tickers))
+        if daily_context.stale_price_tickers:
+            st.warning("Stale prices: " + ", ".join(daily_context.stale_price_tickers))
+
+    with weekly_tab:
+        weekly_one, weekly_two, weekly_three, weekly_four = st.columns(4)
+        weekly_one.metric(
+            "Weekly observable movement",
+            clp(weekly_context.current_week_change_clp),
+            percent(weekly_context.current_week_change_pct),
+        )
+        weekly_two.metric(
+            "Difference vs prior week",
+            clp(weekly_context.difference_vs_previous_week_clp),
+        )
+        weekly_three.metric(
+            "Baseline average",
+            clp(weekly_context.baseline_average_change_clp),
+            f"{weekly_context.baseline_weeks} observed weeks",
+        )
+        weekly_four.metric("Price coverage", percent(weekly_context.price_coverage_pct))
+        st.markdown(weekly_report.text)
+        st.caption(f"Narrative source: {weekly_report.source}")
+        if weekly_report.warning:
+            st.warning(weekly_report.warning)
+        st.dataframe(
+            [
+                {"Ticker": item.ticker, "Weekly contribution": clp(item.amount_clp)}
+                for item in weekly_context.contributions
+            ],
+            hide_index=True,
+            width="stretch",
+        )
+        details_left, details_right = st.columns(2)
+        details_left.write(
+            "Positions added: " + (", ".join(weekly_context.positions_added) or "None")
+        )
+        details_left.write(f"Missing invoices: {weekly_context.missing_invoices}")
+        details_left.write(f"Incomplete records: {weekly_context.incomplete_records}")
+        details_right.write(
+            "Best observable day: "
+            + (
+                f"{weekly_context.best_day.movement_date}: "
+                f"{clp(weekly_context.best_day.amount_clp)}"
+                if weekly_context.best_day
+                else "Not available"
+            )
+        )
+        details_right.write(
+            "Worst observable day: "
+            + (
+                f"{weekly_context.worst_day.movement_date}: "
+                f"{clp(weekly_context.worst_day.amount_clp)}"
+                if weekly_context.worst_day
+                else "Not available"
+            )
+        )
 
 with about_tab:
     st.markdown(

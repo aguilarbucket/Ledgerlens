@@ -54,3 +54,27 @@
 - Ruff, compilation, and Streamlit smoke test passed.
 - No real OpenAI request was made and no API key was configured.
 
+## 2026-07-18 — Daily Lens and Weekly Lens
+
+### Codex contributions
+
+- Added a reproducible synthetic price history spanning the current week, prior week, and seven
+  observable baseline weeks.
+- Added deterministic portfolio snapshots and comparable-period price contribution calculations.
+- Added Daily Lens KPIs for portfolio value, observable daily movement, unrealized P/L, ticker
+  contributions, concentration, new purchases/invoices, price coverage, missing/stale prices, and
+  context quality.
+- Added Weekly Lens KPIs for prior-week difference, baseline average, ticker contributions,
+  concentration/distribution changes, best/worst observable day, positions added, invoice gaps,
+  incomplete records, coverage, and context quality.
+- Added offline factual narratives and optional OpenAI narratives with word-count, advisory,
+  prediction, and invented-causality guardrails.
+- Added Streamlit Daily Lens and Weekly Lens views; no Telegram dependency is required.
+
+### Validation
+
+- `python -m pytest`: 25 tests passed.
+- `python -m ruff check .`: all checks passed.
+- Python compilation and Streamlit in-memory smoke test passed.
+- No OpenAI, Telegram, or yfinance request was made.
+

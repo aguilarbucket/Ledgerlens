@@ -8,7 +8,7 @@
 - [x] Initial tests, lint, compilation, and Streamlit smoke test pass.
 - [x] Synthetic invoice PDF is generated and visually verified from fictional data.
 - [x] PDF extraction requires editable preview and explicit confirmation.
-- [ ] Daily Lens and Weekly Lens are visible in Streamlit.
+- [x] Daily Lens and Weekly Lens are visible in Streamlit with deterministic offline reports.
 - [ ] Full P0 test matrix passes from a clean environment.
 - [ ] Final secret, path, data, and dependency review passes.
 

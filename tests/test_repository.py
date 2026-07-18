@@ -26,3 +26,14 @@ def test_seed_is_idempotent() -> None:
     assert len(repository.list_purchases()) == len(purchases)
     repository.close()
 
+
+def test_sync_synthetic_seed_updates_only_demo_records() -> None:
+    repository = SQLitePortfolioRepository(":memory:")
+    original = demo_purchases()
+    repository.seed_if_empty(original)
+    updated = demo_purchases()
+
+    repository.sync_synthetic_seed(updated)
+
+    assert repository.list_purchases() == updated
+    repository.close()

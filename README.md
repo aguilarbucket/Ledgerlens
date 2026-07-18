@@ -23,6 +23,11 @@ only its SHA-256 with the confirmed purchase for traceability.
 Portfolio analytics demonstrate weighted average cost, current value, unrealized P/L, allocation,
 missing-price handling, and price coverage without external credentials.
 
+Daily Lens and Weekly Lens are also implemented from a synthetic historical price series. Python
+calculates price contributions, comparable-period movement, concentration, distribution shift,
+best/worst observable day, additions, invoice completeness, stale prices, and context quality.
+Both reports have a deterministic offline narrative and an optional guarded OpenAI narrative.
+
 ## Run locally
 
 ```bash
@@ -66,7 +71,8 @@ explicitly and never silently falls back to another model or saves a purchase.
 3. Review and edit the preview. **Implemented.**
 4. Save only after explicit human confirmation. **Implemented.**
 5. Recalculate the portfolio deterministically. **Implemented.**
-6. Generate factual Daily Lens and Weekly Lens narratives. **Next phase.**
+6. Generate factual Daily Lens and Weekly Lens narratives. **Implemented with offline fallback;
+   live OpenAI call not yet executed.**
 
 ## Codex collaboration
 

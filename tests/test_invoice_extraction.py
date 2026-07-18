@@ -12,9 +12,7 @@ VALID_PDF = b"%PDF-1.4\nsynthetic content\n%%EOF\n"
 
 
 def validated_pdf():
-    return validate_pdf(
-        filename="synthetic.pdf", mime_type="application/pdf", content=VALID_PDF
-    )
+    return validate_pdf(filename="synthetic.pdf", mime_type="application/pdf", content=VALID_PDF)
 
 
 def test_fixture_extraction_requires_human_confirmation() -> None:
@@ -48,6 +46,10 @@ class FakeResponses:
         self.kwargs = kwargs
         return SimpleNamespace(output_parsed=self.parsed)
 
+    def create(self, **kwargs):
+        self.kwargs = kwargs
+        return SimpleNamespace(output_text=self.parsed)
+
 
 def test_openai_client_uses_structured_pdf_request_without_network() -> None:
     extraction = FixtureInvoiceExtractor().extract(validated_pdf())
@@ -78,3 +80,16 @@ def test_openai_client_rejects_empty_parsed_response() -> None:
             pdf=validated_pdf(), instructions="Extract fields.", response_model=InvoiceExtraction
         )
 
+
+def test_openai_client_generates_text_without_exposing_context_in_logs() -> None:
+    responses = FakeResponses("Factual narrative.")
+    client = OpenAIResponsesClient(model="gpt-5.6", sdk_client=SimpleNamespace(responses=responses))
+
+    result = client.generate_text(
+        instructions="Use facts only.", input_text='{"metric":"value"}', max_output_tokens=100
+    )
+
+    assert result == "Factual narrative."
+    assert responses.kwargs["store"] is False
+    assert responses.kwargs["model"] == "gpt-5.6"
+    assert responses.kwargs["input"] == '{"metric":"value"}'

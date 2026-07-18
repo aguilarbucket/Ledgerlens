@@ -14,6 +14,11 @@ LedgerLens separates financial truth from generated narrative.
    explicit human confirmation.
 9. Analyst modules will receive structured deterministic context and may only produce narrative.
 
+Historical intelligence uses timestamped fixture prices and confirmed purchases to construct
+comparable snapshots. Market movement excludes the cash effect of purchases made inside the
+comparison period; those purchases are reported separately. Daily and weekly narratives consume
+serialized KPI contexts and pass through word-count and financial-language guardrails.
+
 SQLite is used locally for traceability and transactional writes. Runtime databases are ignored
 by Git. Confirmed invoice purchases retain the source, confirmation timestamp, document reference,
 and SHA-256; uploaded bytes are not persisted. The repository contains synthetic fixtures only.

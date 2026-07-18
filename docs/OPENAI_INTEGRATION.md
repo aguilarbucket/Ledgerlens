@@ -14,6 +14,10 @@ Build Week requirement and current guide examples. Availability and the exact ac
 must be validated with the project API account before the first paid request. LedgerLens never
 silently switches to an older model.
 
+Daily Lens and Weekly Lens send only serialized deterministic KPI contexts. Generated text must
+pass maximum-word and financial-language guardrails. Empty, excessive, advisory, predictive, or
+causal text is rejected and replaced by a clearly labeled deterministic fallback.
+
 ## Credential boundary
 
 `OPENAI_API_KEY` is read only from the environment. It is never accepted through the UI, logged,

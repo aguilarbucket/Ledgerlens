@@ -10,6 +10,11 @@ Target duration: under three minutes. This script will be expanded when analyst 
 5. Demonstrate that clicking save without the confirmation checkbox is rejected.
 6. Confirm the purchase and show the resulting portfolio update and document-hash traceability.
 7. Show unrealized P/L and price coverage, emphasizing that Python performs every calculation.
-8. Show Daily Lens and Weekly Lens after they are implemented.
+8. Open Daily Lens and show portfolio value, observable movement, per-ticker contributions, price
+   coverage, and the deterministic narrative source.
+9. Open Weekly Lens and show prior-week difference, seven-week baseline, distribution shift,
+   added positions, and best/worst observable day.
+10. Explain that selecting OpenAI without a configured key produces an explicit warning and keeps
+    the reproducible deterministic report; it never switches models silently.
 
 Do not record a final submission video until the complete P0 flow is implemented and verified.
