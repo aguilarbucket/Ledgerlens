@@ -23,5 +23,14 @@ def test_docker_context_excludes_local_credentials_and_runtime_data() -> None:
     assert ".env" in patterns
     assert ".env.*" in patterns
     assert ".venv/" in patterns
-    assert "runtime/" in patterns
+    assert "/runtime/" in patterns
+    assert "/invoices/" in patterns
+    assert "invoices/" not in patterns
     assert "*.db" in patterns
+
+
+def test_gitignore_does_not_hide_invoice_source_package() -> None:
+    patterns = (PROJECT_ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
+
+    assert "/invoices/" in patterns
+    assert "invoices/" not in patterns
