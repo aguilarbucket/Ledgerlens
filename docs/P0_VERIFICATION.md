@@ -18,13 +18,13 @@ Devpost publication, licensing, video recording, or Session ID collection.
 | Weekly Analyst | Prior week, seven-week baseline, guarded narrative, insufficient baseline test | Pass |
 | Streamlit visibility | Portfolio, import, history, Daily Lens, Weekly Lens, and About rendered | Pass |
 | Offline operation | Default app and automated tests require no OpenAI, yfinance, or Telegram access | Pass |
-| Automated tests | 33 tests | Pass |
+| Automated tests | 34 tests | Pass |
 | Reproducible container | Fresh `python:3.13-slim` build and health-checked runtime | Pass |
 | Judge documentation | README, architecture, testing, demo, provenance, changelog, and checklist | Pass |
 
 ## Executed verification
 
-- `python -m pytest -q`: 33 passed.
+- `python -m pytest -q`: 34 passed.
 - `python -m ruff check .`: passed.
 - `python -m compileall -q app.py ledgerlens sample_data scripts tests`: passed.
 - Streamlit AppTest: passed; all seven top-level and nested tabs were discovered.
@@ -52,8 +52,13 @@ checks and should be retried before public release if the advisory service is av
 
 ## Clean environment
 
-The final committed tree will be exported into a new temporary directory, installed into a new
-virtual environment, and tested without `.env`, Git metadata, runtime database, or caches. Final
-results are recorded here after that run.
+The committed tree at `9b25eb5` was exported with `git archive` into a new temporary directory and
+installed into a new virtual environment. Before execution, the export contained no `.git`, `.env`,
+runtime database, or cache. `pip check`, all 34 tests, Ruff, compilation, and Streamlit AppTest
+passed. The temporary environment was then removed.
 
-Status: pending final isolated run.
+The first isolated export exposed that an unanchored `invoices/` ignore rule had hidden the
+`ledgerlens/invoices` source package from Git. The rule was anchored to the root data directory,
+the complete package was committed, and a regression test was added before the successful rerun.
+
+Status: passed.

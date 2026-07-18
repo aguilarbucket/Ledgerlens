@@ -78,7 +78,7 @@
 - Python compilation and Streamlit in-memory smoke test passed.
 - No OpenAI, Telegram, or yfinance request was made.
 
-## 2026-07-18 â€” Controlled live OpenAI validation
+## 2026-07-18 — Controlled live OpenAI validation
 
 ### Codex contributions
 
@@ -101,3 +101,32 @@
 - Exactly three Responses API requests completed with HTTP 200; `store=False` remained enforced.
 - `python -m pytest`: 27 tests passed.
 - `python -m ruff check .`: all checks passed.
+
+## 2026-07-18 — P0 closure
+
+### Codex contributions
+
+- Added a root-scoped `.dockerignore` so local credentials and runtime data cannot enter the image
+  while application source packages remain available.
+- Hardened Docker with an unprivileged runtime user, explicit synthetic configuration, and a
+  health check.
+- Added missing-key, insufficient-context, dependency-boundary, and ignore-rule regression tests.
+- Expanded the English README with architecture, judge quickstart, environment, limitations,
+  privacy, GPT-5.6, Codex collaboration, human decisions, and financial disclaimer sections.
+- Added an executed P0 verification matrix.
+
+### Validation
+
+- Initial clean-tree export correctly failed because the generic `invoices/` ignore rule had hidden
+  the `ledgerlens/invoices` source package from Git.
+- Anchored the private-data exclusion to `/invoices/`, committed the complete invoice package, and
+  added a regression test.
+- Repeated the clean export into a new virtual environment with no Git metadata, `.env`, database,
+  or cache: `pip check`, 34 tests, Ruff, compilation, and Streamlit AppTest passed.
+- Fresh Docker build and final rebuild passed; the container was healthy, returned HTTP 200, ran as
+  UID 999, imported the invoice package, included the synthetic PDF, and contained no `.env`.
+- Browser workflow passed upload, preview, unchecked-save rejection, confirmed save, portfolio
+  refresh, Daily Lens, and Weekly Lens with no console errors.
+- Final tracked-file scans found no API key patterns, personal paths, or private-system names.
+- External `pip-audit` advisory queries timed out; no CVE result is claimed. Host/container
+  dependency consistency passed with pinned requirements and `pip check`.

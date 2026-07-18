@@ -5,6 +5,7 @@ Install development dependencies and run:
 ```bash
 python -m pytest
 python -m ruff check .
+python -m compileall -q app.py ledgerlens sample_data scripts tests
 ```
 
 The suite covers weighted average cost, invested/current value, unrealized P/L, partial and missing
@@ -14,6 +15,8 @@ mandatory human confirmation, structured OpenAI request construction, and empty 
 It also covers daily and weekly contributions, prior-week comparison, seven-week baseline,
 concentration, allocation shift, best/worst observable day, missing/stale prices, narrative length,
 prohibited financial language, deterministic fallback, and guarded generated narratives.
+It also verifies missing credentials, absence of Telegram from the runtime, fixture-only demo
+market data, root-anchored private invoice exclusions, and Docker credential boundaries.
 
 Tests must never call OpenAI, Telegram, yfinance, or any other network service.
 
@@ -30,3 +33,11 @@ extraction plus one guarded Daily Lens and one guarded Weekly Lens narrative. It
 latency, and pass/fail status without printing the API key, document body, prompts, or narratives.
 Automatic SDK retries are disabled for this validator so transient failures cannot exceed the
 three-attempt ceiling.
+
+## P0 reproducibility checks
+
+The final P0 matrix also builds Docker from the current slim base, checks the health endpoint,
+confirms an unprivileged runtime user, verifies `.env` is absent from the image, and exercises the
+complete synthetic invoice workflow in a browser. A committed-tree export is installed into a new
+virtual environment without Git metadata, `.env`, runtime databases, or caches. See
+`docs/P0_VERIFICATION.md` for executed results and the dependency-audit note.

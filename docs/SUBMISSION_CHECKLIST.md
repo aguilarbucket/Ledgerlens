@@ -10,14 +10,14 @@
 - [x] PDF extraction requires editable preview and explicit confirmation.
 - [x] Daily Lens and Weekly Lens are visible in Streamlit with deterministic offline reports.
 - [x] Controlled GPT-5.6 extraction and Daily/Weekly narrative smoke checks pass on synthetic data.
-- [ ] Full P0 test matrix passes from a clean environment.
-- [ ] Final secret, path, data, and dependency review passes.
+- [x] Full P0 test matrix passes from a clean environment.
+- [x] Final secret, path, data, and dependency review passes; external CVE query timeout is noted.
 
 ## Devpost materials
 
 - [ ] English project description finalized.
 - [ ] Public demo video with audio is under three minutes.
 - [ ] Repository is public with appropriate licensing or privately shared with the required judges.
-- [ ] README explains Codex, GPT-5.6, and human decisions.
+- [x] README explains Codex, GPT-5.6, and human decisions.
 - [ ] Majority-work Codex thread Session ID captured through `/feedback`.
 - [ ] Submission instructions and all claims match verified behavior.
