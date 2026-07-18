@@ -6,6 +6,7 @@
 - `ledgerlens/data`: persistence adapters.
 - `ledgerlens/market`: live and synthetic market data providers.
 - `ledgerlens/analytics`: deterministic calculations only.
+- `ledgerlens/invoices`: PDF validation, typed extraction records, and confirmation rules.
 - `ledgerlens/ai`: OpenAI integration; never performs financial calculations.
 - `ledgerlens/analysts`: daily and weekly narrative orchestration.
 - `app.py`: Streamlit composition layer.
@@ -31,4 +32,3 @@
 
 A change is done when its deterministic behavior is tested, offline demo behavior still works,
 privacy boundaries are preserved, documentation is updated, and lint/tests pass.
-

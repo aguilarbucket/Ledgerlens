@@ -8,14 +8,20 @@ This repository is the OpenAI Build Week extension of a pre-existing Streamlit t
 work added for Build Week is evaluated here; the baseline is documented in
 `docs/PREEXISTING_BASELINE.md`.
 
-## Current vertical slice
+## Current product flow
 
-The first slice is fully offline and synthetic:
+The implemented flow is fully usable without credentials:
 
-`synthetic purchases -> fixture prices -> deterministic metrics -> Streamlit portfolio`
+`synthetic PDF -> validation -> structured fixture extraction -> editable preview -> explicit
+confirmation -> deterministic portfolio`
 
-It demonstrates weighted average cost, current value, unrealized P/L, allocation, missing-price
-handling, and price coverage without external credentials.
+The fixture extraction is clearly labeled and makes no model request. If `OPENAI_API_KEY` is
+configured, the same validated PDF and typed response model can be sent through the official
+Responses API. The uploaded PDF is processed in memory and is not persisted; LedgerLens retains
+only its SHA-256 with the confirmed purchase for traceability.
+
+Portfolio analytics demonstrate weighted average cost, current value, unrealized P/L, allocation,
+missing-price handling, and price coverage without external credentials.
 
 ## Run locally
 
@@ -27,7 +33,8 @@ streamlit run app.py
 ```
 
 The default demo creates a local ignored database under `runtime/`. All displayed data is
-fictional.
+fictional. A polished synthetic PDF is available at
+`output/pdf/ledgerlens_synthetic_invoice.pdf`.
 
 ## Test
 
@@ -39,7 +46,8 @@ python -m ruff check .
 ## Environment
 
 Copy `.env.example` to `.env` only when live integrations are ready. Never commit `.env`.
-`OPENAI_API_KEY` is not required for the current slice.
+`OPENAI_API_KEY` is not required for fixture extraction. Selecting OpenAI mode without a key fails
+explicitly and never silently falls back to another model or saves a purchase.
 
 ## Privacy and financial boundaries
 
@@ -52,12 +60,13 @@ Copy `.env.example` to `.env` only when live integrations are ready. Never commi
 
 ## Planned Build Week flow
 
-1. Upload a fully synthetic brokerage PDF.
-2. Extract typed fields with GPT-5.6 through the Responses API.
-3. Review and edit the preview.
-4. Save only after explicit human confirmation.
-5. Recalculate the portfolio deterministically.
-6. Generate factual Daily Lens and Weekly Lens narratives from structured Python context.
+1. Upload a fully synthetic brokerage PDF. **Implemented.**
+2. Extract typed fields using a fixture or GPT-5.6 through the Responses API. **Implemented; live
+   call not yet executed.**
+3. Review and edit the preview. **Implemented.**
+4. Save only after explicit human confirmation. **Implemented.**
+5. Recalculate the portfolio deterministically. **Implemented.**
+6. Generate factual Daily Lens and Weekly Lens narratives. **Next phase.**
 
 ## Codex collaboration
 
@@ -65,4 +74,3 @@ Codex is being used in the main project session to audit the baseline, design th
 implement and test the extension, and prepare privacy and judge documentation. The human owner
 defines product scope, confirms provenance, controls credentials, and authorizes any future
 publication or deployment.
-

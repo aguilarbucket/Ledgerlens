@@ -33,3 +33,24 @@
   found in project files.
 - No OpenAI, Telegram, or yfinance calls were made.
 
+## 2026-07-18 — Human-verified invoice import
+
+### Codex contributions
+
+- Added strict PDF validation for extension, MIME type, configurable size, signature, and EOF.
+- Added typed invoice extraction with per-field confidence and warnings.
+- Added a centralized Responses API client using in-memory Base64 PDF input, `store=False`,
+  configurable model/timeout, and metadata-only logging.
+- Added explicit offline fixture and OpenAI extraction modes; no silent fallback occurs.
+- Added an editable Streamlit preview and mandatory confirmation before repository writes.
+- Added SHA-256 traceability without persisting uploaded PDF bytes.
+- Generated and visually verified a one-page synthetic brokerage invoice.
+
+### Validation
+
+- Official OpenAI file-input documentation was checked for Base64 `input_file` request shape.
+- Installed SDK signature was inspected for `responses.parse` and typed `text_format` support.
+- Automated tests: 17 passed.
+- Ruff, compilation, and Streamlit smoke test passed.
+- No real OpenAI request was made and no API key was configured.
+

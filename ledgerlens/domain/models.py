@@ -16,6 +16,7 @@ class Purchase:
     platform: str
     currency: str = "CLP"
     document_reference: str | None = None
+    document_sha256: str | None = None
     source: str = "manual"
     confirmed_at: datetime | None = None
 
@@ -53,4 +54,3 @@ class PortfolioMetrics:
     unrealized_return_pct: Decimal | None
     price_coverage_pct: Decimal
     missing_price_tickers: tuple[str, ...]
-

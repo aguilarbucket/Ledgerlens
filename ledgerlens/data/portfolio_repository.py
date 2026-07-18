@@ -37,11 +37,17 @@ class SQLitePortfolioRepository:
                 platform TEXT NOT NULL,
                 currency TEXT NOT NULL,
                 document_reference TEXT,
+                document_sha256 TEXT,
                 source TEXT NOT NULL,
                 confirmed_at TEXT
             )
             """
         )
+        columns = {
+            row["name"] for row in self._connection.execute("PRAGMA table_info(purchases)")
+        }
+        if "document_sha256" not in columns:
+            self._connection.execute("ALTER TABLE purchases ADD COLUMN document_sha256 TEXT")
         self._connection.commit()
 
     def list_purchases(self) -> list[Purchase]:
@@ -59,6 +65,7 @@ class SQLitePortfolioRepository:
                 platform=row["platform"],
                 currency=row["currency"],
                 document_reference=row["document_reference"],
+                document_sha256=row["document_sha256"],
                 source=row["source"],
                 confirmed_at=(
                     datetime.fromisoformat(row["confirmed_at"])
@@ -75,7 +82,8 @@ class SQLitePortfolioRepository:
             INSERT INTO purchases (
                 id, company, ticker, quantity, unit_price_clp, purchase_date,
                 platform, currency, document_reference, source, confirmed_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                , document_sha256
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 purchase.id,
@@ -89,6 +97,7 @@ class SQLitePortfolioRepository:
                 purchase.document_reference,
                 purchase.source,
                 purchase.confirmed_at.isoformat() if purchase.confirmed_at else None,
+                purchase.document_sha256,
             ),
         )
         self._connection.commit()
@@ -101,4 +110,3 @@ class SQLitePortfolioRepository:
 
     def close(self) -> None:
         self._connection.close()
-

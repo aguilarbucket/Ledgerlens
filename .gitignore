@@ -22,4 +22,4 @@ backups/
 !.env.example
 !sample_data/**/*.csv
 !sample_data/**/*.pdf
-
+!output/pdf/*.pdf
