@@ -9,6 +9,7 @@ from typing import Any
 from openai import OpenAI
 from pydantic import BaseModel
 
+from ledgerlens.config import load_project_environment
 from ledgerlens.invoices.pdf_validation import ValidatedPDF
 
 logger = logging.getLogger(__name__)
@@ -29,14 +30,20 @@ class OpenAIResponsesClient:
         api_key: str | None = None,
         model: str | None = None,
         timeout_seconds: float = 60,
+        max_retries: int = 2,
         sdk_client: Any | None = None,
     ) -> None:
+        load_project_environment()
         resolved_key = api_key or os.getenv("OPENAI_API_KEY")
         if not resolved_key and sdk_client is None:
             raise OpenAIConfigurationError("OPENAI_API_KEY is not configured.")
         self.model = model or os.getenv("OPENAI_MODEL", "gpt-5.6")
         self.timeout_seconds = timeout_seconds
-        self._client = sdk_client or OpenAI(api_key=resolved_key, timeout=timeout_seconds)
+        self._client = sdk_client or OpenAI(
+            api_key=resolved_key,
+            timeout=timeout_seconds,
+            max_retries=max_retries,
+        )
 
     def parse_pdf(
         self,
@@ -111,4 +118,3 @@ class OpenAIResponsesClient:
                 time.perf_counter() - started,
                 status,
             )
-

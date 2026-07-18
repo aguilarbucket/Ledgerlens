@@ -17,12 +17,15 @@ from ledgerlens.analytics.portfolio_intelligence import (
     build_weekly_context,
 )
 from ledgerlens.analytics.portfolio_metrics import calculate_portfolio_metrics
+from ledgerlens.config import load_project_environment
 from ledgerlens.data.portfolio_repository import SQLitePortfolioRepository
 from ledgerlens.invoices.confirmation import confirm_extraction
 from ledgerlens.invoices.models import InvoiceExtraction
 from ledgerlens.invoices.pdf_validation import PDFValidationError, validate_pdf
 from ledgerlens.market.market_data_provider import FixtureMarketDataProvider
 from sample_data.demo_data import demo_price_history, demo_prices, demo_purchases
+
+load_project_environment()
 
 
 def clp(value: Decimal | None) -> str:

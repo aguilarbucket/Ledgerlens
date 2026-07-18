@@ -2,6 +2,7 @@ from types import SimpleNamespace
 
 import pytest
 
+import ledgerlens.ai.openai_client as openai_client_module
 from ledgerlens.ai.invoice_extractor import FixtureInvoiceExtractor
 from ledgerlens.ai.openai_client import OpenAIResponseError, OpenAIResponsesClient
 from ledgerlens.invoices.confirmation import ConfirmationRequiredError, confirm_extraction
@@ -49,6 +50,19 @@ class FakeResponses:
     def create(self, **kwargs):
         self.kwargs = kwargs
         return SimpleNamespace(output_text=self.parsed)
+
+
+def test_openai_client_can_disable_sdk_retries(monkeypatch) -> None:
+    captured = {}
+
+    def fake_openai(**kwargs):
+        captured.update(kwargs)
+        return SimpleNamespace(responses=FakeResponses(None))
+
+    monkeypatch.setattr(openai_client_module, "OpenAI", fake_openai)
+    OpenAIResponsesClient(api_key="synthetic-test-key", max_retries=0)
+
+    assert captured["max_retries"] == 0
 
 
 def test_openai_client_uses_structured_pdf_request_without_network() -> None:

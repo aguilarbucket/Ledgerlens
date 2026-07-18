@@ -78,3 +78,26 @@
 - Python compilation and Streamlit in-memory smoke test passed.
 - No OpenAI, Telegram, or yfinance request was made.
 
+## 2026-07-18 â€” Controlled live OpenAI validation
+
+### Codex contributions
+
+- Added project-local `.env` loading that preserves explicit process environment values.
+- Added an opt-in validator capped at three billable requests and restricted to bundled synthetic
+  inputs.
+- Recorded only model, latency, and pass/fail metadata; no credential, prompt, document body, or
+  generated narrative was printed or persisted.
+
+### Human decisions
+
+- The owner created the limited-use API credential locally and confirmed readiness for the
+  controlled test.
+
+### Validation
+
+- `gpt-5.6` structured synthetic PDF extraction: passed, 5.835 seconds.
+- `gpt-5.6` Daily Lens narrative guardrails: passed, 4.087 seconds.
+- `gpt-5.6` Weekly Lens narrative guardrails: passed, 4.888 seconds.
+- Exactly three Responses API requests completed with HTTP 200; `store=False` remained enforced.
+- `python -m pytest`: 27 tests passed.
+- `python -m ruff check .`: all checks passed.

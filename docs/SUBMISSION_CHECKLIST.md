@@ -9,6 +9,7 @@
 - [x] Synthetic invoice PDF is generated and visually verified from fictional data.
 - [x] PDF extraction requires editable preview and explicit confirmation.
 - [x] Daily Lens and Weekly Lens are visible in Streamlit with deterministic offline reports.
+- [x] Controlled GPT-5.6 extraction and Daily/Weekly narrative smoke checks pass on synthetic data.
 - [ ] Full P0 test matrix passes from a clean environment.
 - [ ] Final secret, path, data, and dependency review passes.
 

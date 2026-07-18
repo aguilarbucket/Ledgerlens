@@ -48,6 +48,12 @@ python -m pytest
 python -m ruff check .
 ```
 
+The optional live smoke check is explicitly billable and uses only the bundled synthetic data:
+
+```bash
+python -m scripts.validate_openai_live --confirm-live
+```
+
 ## Environment
 
 Copy `.env.example` to `.env` only when live integrations are ready. Never commit `.env`.
@@ -66,13 +72,13 @@ explicitly and never silently falls back to another model or saves a purchase.
 ## Planned Build Week flow
 
 1. Upload a fully synthetic brokerage PDF. **Implemented.**
-2. Extract typed fields using a fixture or GPT-5.6 through the Responses API. **Implemented; live
-   call not yet executed.**
+2. Extract typed fields using a fixture or GPT-5.6 through the Responses API. **Implemented and
+   validated live with the synthetic PDF.**
 3. Review and edit the preview. **Implemented.**
 4. Save only after explicit human confirmation. **Implemented.**
 5. Recalculate the portfolio deterministically. **Implemented.**
-6. Generate factual Daily Lens and Weekly Lens narratives. **Implemented with offline fallback;
-   live OpenAI call not yet executed.**
+6. Generate factual Daily Lens and Weekly Lens narratives. **Implemented with offline fallback and
+   validated live through their financial-language guardrails.**
 
 ## Codex collaboration
 
