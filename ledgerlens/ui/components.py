@@ -158,6 +158,75 @@ def quality_summary_html(
 """
 
 
+def workflow_steps_html(current_step: str) -> str:
+    steps = ("Upload", "Extract", "Review", "Confirm")
+    if current_step not in {step.lower() for step in steps}:
+        raise ValueError(f"Unsupported workflow step: {current_step}")
+    current_index = [step.lower() for step in steps].index(current_step)
+    items = []
+    for index, step in enumerate(steps):
+        state = (
+            "completed"
+            if index < current_index
+            else "active"
+            if index == current_index
+            else "pending"
+        )
+        marker = "✓" if state == "completed" else str(index + 1)
+        items.append(
+            f'<div class="ll-workflow-step" data-state="{state}">'
+            f'<span class="ll-workflow-marker">{marker}</span>'
+            f'<span class="ll-workflow-label">{step}</span></div>'
+        )
+    return (
+        '<div class="ll-workflow" aria-label="Invoice import progress">'
+        + "".join(items)
+        + "</div>"
+    )
+
+
+def document_policy_html() -> str:
+    return """
+<div class="ll-policy-card" role="note">
+  <div class="ll-policy-icon" aria-hidden="true">PDF</div>
+  <div>
+    <div class="ll-policy-title">Private by design</div>
+    <p>The PDF is validated and processed in memory. It is never stored by LedgerLens.</p>
+    <p>Only confirmed fields and the document SHA-256 are retained for traceability.</p>
+  </div>
+</div>
+"""
+
+
+def source_metadata_html(*, source: str, size_bytes: int, sha256_prefix: str) -> str:
+    is_ai = "openai" in source.lower()
+    source_kind = "ai" if is_ai else "offline"
+    source_label = "OpenAI extraction" if is_ai else "Offline fixture"
+    return f"""
+<div class="ll-source-metadata">
+  <span class="ll-source-badge" data-source="{source_kind}">{source_label}</span>
+  <span>{size_bytes:,} bytes</span>
+  <span>SHA-256 {escape(sha256_prefix)}…</span>
+</div>
+"""
+
+
+def confidence_grid_html(confidence: dict[str, float]) -> str:
+    items = []
+    for field, raw_value in confidence.items():
+        value = min(max(float(raw_value), 0.0), 1.0)
+        label = field.replace("_", " ").title()
+        items.append(
+            '<div class="ll-confidence-item">'
+            f'<div><span>{escape(label)}</span><strong>{value:.0%}</strong></div>'
+            '<div class="ll-confidence-track" '
+            f'aria-label="{escape(label)} confidence {value:.0%}">'
+            f'<div class="ll-confidence-fill" style="width: {value * 100:.2f}%"></div>'
+            "</div></div>"
+        )
+    return '<div class="ll-confidence-grid">' + "".join(items) + "</div>"
+
+
 def render_app_header(*, subtitle: str, badge: str = "Synthetic demo") -> None:
     st.markdown(app_header_html(subtitle=subtitle, badge=badge), unsafe_allow_html=True)
 
@@ -249,3 +318,26 @@ def render_quality_summary(
         ),
         unsafe_allow_html=True,
     )
+
+
+def render_workflow_steps(current_step: str) -> None:
+    st.markdown(workflow_steps_html(current_step), unsafe_allow_html=True)
+
+
+def render_document_policy() -> None:
+    st.markdown(document_policy_html(), unsafe_allow_html=True)
+
+
+def render_source_metadata(*, source: str, size_bytes: int, sha256_prefix: str) -> None:
+    st.markdown(
+        source_metadata_html(
+            source=source,
+            size_bytes=size_bytes,
+            sha256_prefix=sha256_prefix,
+        ),
+        unsafe_allow_html=True,
+    )
+
+
+def render_confidence_grid(confidence: dict[str, float]) -> None:
+    st.markdown(confidence_grid_html(confidence), unsafe_allow_html=True)

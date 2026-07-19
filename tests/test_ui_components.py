@@ -5,11 +5,15 @@ import pytest
 from ledgerlens.ui.components import (
     app_header_html,
     chart_legend_html,
+    confidence_grid_html,
+    document_policy_html,
     kpi_card_html,
     notice_html,
     platform_allocation_html,
     position_card_html,
     quality_summary_html,
+    source_metadata_html,
+    workflow_steps_html,
 )
 from ledgerlens.ui.formatters import (
     clp,
@@ -131,3 +135,38 @@ def test_quality_summary_rejects_unknown_status() -> None:
             missing_tickers=(),
             stale_tickers=(),
         )
+
+
+def test_workflow_steps_expose_completed_active_and_pending_states() -> None:
+    html = workflow_steps_html("review")
+
+    assert html.count('data-state="completed"') == 2
+    assert html.count('data-state="active"') == 1
+    assert html.count('data-state="pending"') == 1
+    assert "Invoice import progress" in html
+
+
+def test_workflow_steps_reject_unknown_stage() -> None:
+    with pytest.raises(ValueError, match="Unsupported workflow step"):
+        workflow_steps_html("saved")
+
+
+def test_source_metadata_labels_ai_and_escapes_hash() -> None:
+    html = source_metadata_html(
+        source="openai_responses_api",
+        size_bytes=2048,
+        sha256_prefix="safe<script>",
+    )
+
+    assert 'data-source="ai"' in html
+    assert "OpenAI extraction" in html
+    assert "safe&lt;script&gt;" in html
+
+
+def test_confidence_grid_clamps_visual_width() -> None:
+    html = confidence_grid_html({"unit_price": 1.2, "ticker": -0.1})
+
+    assert "Unit Price" in html
+    assert "width: 100.00%" in html
+    assert "width: 0.00%" in html
+    assert "Private by design" in document_policy_html()

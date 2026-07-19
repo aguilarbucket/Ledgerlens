@@ -446,12 +446,148 @@ def stylesheet() -> str:
         font-weight: 650;
     }}
 
+    .ll-workflow {{
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.5rem;
+        margin: 0.5rem 0 1.25rem;
+    }}
+
+    .ll-workflow-step {{
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        min-width: 0;
+        padding: 0.65rem 0.72rem;
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        border-radius: var(--ll-radius-sm);
+        background: rgba(17, 27, 46, 0.55);
+    }}
+
+    .ll-workflow-step[data-state="active"] {{
+        border-color: rgba(79, 140, 255, 0.58);
+        background: rgba(79, 140, 255, 0.1);
+    }}
+
+    .ll-workflow-step[data-state="completed"] {{ border-color: rgba(45, 212, 191, 0.28); }}
+
+    .ll-workflow-marker {{
+        display: grid;
+        flex: 0 0 auto;
+        width: 1.55rem;
+        height: 1.55rem;
+        place-items: center;
+        border-radius: 999px;
+        background: rgba(148, 163, 184, 0.12);
+        color: var(--ll-text-muted);
+        font-size: 0.7rem;
+        font-weight: 750;
+    }}
+
+    .ll-workflow-step[data-state="active"] .ll-workflow-marker {{
+        background: var(--ll-primary); color: #FFFFFF;
+    }}
+    .ll-workflow-step[data-state="completed"] .ll-workflow-marker {{
+        background: rgba(45, 212, 191, 0.14); color: #5EEAD4;
+    }}
+
+    .ll-workflow-label {{
+        overflow: hidden;
+        color: var(--ll-text-muted);
+        font-size: 0.77rem;
+        font-weight: 680;
+        text-overflow: ellipsis;
+    }}
+    .ll-workflow-step[data-state="active"] .ll-workflow-label {{ color: #DBEAFE; }}
+
+    .ll-policy-card {{
+        display: flex;
+        gap: 0.9rem;
+        min-height: 10rem;
+        padding: 1rem;
+        border: 1px solid rgba(45, 212, 191, 0.2);
+        border-radius: var(--ll-radius-md);
+        background: linear-gradient(145deg, rgba(45, 212, 191, 0.07), rgba(17, 27, 46, 0.62));
+    }}
+
+    .ll-policy-icon {{
+        display: grid;
+        flex: 0 0 auto;
+        width: 2.5rem;
+        height: 2.5rem;
+        place-items: center;
+        border-radius: 12px;
+        background: rgba(45, 212, 191, 0.12);
+        color: #5EEAD4;
+        font-size: 0.68rem;
+        font-weight: 800;
+    }}
+
+    .ll-policy-title {{ color: var(--ll-text); font-size: 0.9rem; font-weight: 720; }}
+    .ll-policy-card p {{
+        margin: 0.45rem 0 0;
+        color: var(--ll-text-muted);
+        font-size: 0.78rem;
+        line-height: 1.45;
+    }}
+
+    .ll-source-metadata {{
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.55rem 0.8rem;
+        margin: 0.35rem 0 1rem;
+        color: var(--ll-text-muted);
+        font-size: 0.72rem;
+        font-variant-numeric: tabular-nums;
+    }}
+
+    .ll-source-badge {{
+        padding: 0.3rem 0.55rem;
+        border-radius: 999px;
+        background: rgba(45, 212, 191, 0.1);
+        color: #99F6E4;
+        font-weight: 720;
+    }}
+    .ll-source-badge[data-source="ai"] {{ background: rgba(79, 140, 255, 0.12); color: #BFDBFE; }}
+
+    .ll-confidence-grid {{
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.9rem 1rem;
+    }}
+    .ll-confidence-item > div:first-child {{
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+    }}
+    .ll-confidence-item span {{ color: var(--ll-text-muted); font-size: 0.73rem; }}
+    .ll-confidence-item strong {{
+        color: #E2E8F0;
+        font-size: 0.73rem;
+        font-variant-numeric: tabular-nums;
+    }}
+    .ll-confidence-track {{
+        height: 0.38rem;
+        margin-top: 0.35rem;
+        overflow: hidden;
+        border-radius: 999px;
+        background: rgba(148, 163, 184, 0.12);
+    }}
+    .ll-confidence-fill {{
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--ll-primary), var(--ll-secondary));
+    }}
+
     @media (max-width: 768px) {{
         .block-container {{ padding: 1rem 1rem 3rem; }}
         .ll-app-header {{ align-items: flex-start; }}
         .ll-brand-copy {{ max-width: 28rem; }}
         [data-baseweb="tab-list"] {{ overflow-x: auto; scrollbar-width: thin; }}
         [data-baseweb="tab"] {{ flex: 0 0 auto; }}
+        .ll-workflow {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
     }}
 
     @media (max-width: 480px) {{
@@ -462,6 +598,7 @@ def stylesheet() -> str:
         .ll-position-card {{ min-height: auto; }}
         .ll-platform-labels {{ align-items: flex-start; flex-direction: column; gap: 0.2rem; }}
         .ll-quality-grid {{ grid-template-columns: 1fr; }}
+        .ll-confidence-grid {{ grid-template-columns: 1fr; }}
     }}
 
     @media (prefers-reduced-motion: reduce) {{
