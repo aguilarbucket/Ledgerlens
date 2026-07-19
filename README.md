@@ -99,12 +99,12 @@ No API key is needed for the reproducible judge path.
 
 ### Published image
 
-```bash
+The following commands work unchanged in Windows PowerShell, Command Prompt, Bash, and zsh:
+
+```console
 docker pull alejandroromeroa/ledgerlens:buildweek-2026
 docker volume create ledgerlens-data
-docker run --rm --name ledgerlens -p 8501:8501 \
-  --mount type=volume,source=ledgerlens-data,target=/app/runtime \
-  alejandroromeroa/ledgerlens:buildweek-2026
+docker run --rm --name ledgerlens -p 8501:8501 --mount "type=volume,source=ledgerlens-data,target=/app/runtime" alejandroromeroa/ledgerlens:buildweek-2026
 ```
 
 Open `http://localhost:8501`. Add `--env-file .env` before the image name only when testing the
@@ -114,11 +114,9 @@ rebuilt. Uploaded PDFs, unconfirmed drafts, and API credentials are not stored i
 
 ### Build the image locally
 
-```bash
+```console
 docker build -t ledgerlens:buildweek-ui .
-docker run --rm --name ledgerlens-local -p 8501:8501 \
-  --mount type=volume,source=ledgerlens-data,target=/app/runtime \
-  ledgerlens:buildweek-ui
+docker run --rm --name ledgerlens-local -p 8501:8501 --mount "type=volume,source=ledgerlens-data,target=/app/runtime" ledgerlens:buildweek-ui
 ```
 
 Docker Compose provides the same persistent setup and automatically reads the ignored local

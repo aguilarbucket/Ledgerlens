@@ -285,3 +285,19 @@
 
 - No API key was supplied, no live OpenAI/yfinance/Telegram request occurred, and no hosted
   application deployment was created.
+
+## 2026-07-19 — Cross-shell Docker quickstart correction
+
+### User validation
+
+- The owner successfully pulled the public `buildweek-2026` image and confirmed the published
+  manifest digest.
+- The multiline Bash example failed in Windows PowerShell because PowerShell does not use `\` as
+  its line-continuation character.
+
+### Documentation correction
+
+- Replaced multiline `docker run` examples with quoted, single-line commands that work unchanged
+  in Windows PowerShell, Command Prompt, Bash, and zsh.
+- Updated the README, judge instructions, and Devpost submission copy without changing or
+  rebuilding the verified container image.

@@ -187,12 +187,12 @@ outside the current scope.
 
 ## Judge quickstart
 
-```bash
+The following commands work unchanged in Windows PowerShell, Command Prompt, Bash, and zsh:
+
+```console
 docker pull alejandroromeroa/ledgerlens:buildweek-2026
 docker volume create ledgerlens-data
-docker run --rm --name ledgerlens -p 8501:8501 \
-  --mount type=volume,source=ledgerlens-data,target=/app/runtime \
-  alejandroromeroa/ledgerlens:buildweek-2026
+docker run --rm --name ledgerlens -p 8501:8501 --mount "type=volume,source=ledgerlens-data,target=/app/runtime" alejandroromeroa/ledgerlens:buildweek-2026
 ```
 
 Open `http://localhost:8501`, use the bundled synthetic invoice and Offline fixture extraction,

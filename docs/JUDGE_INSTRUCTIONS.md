@@ -7,12 +7,13 @@ connection, or external market service is required for the reproducible judge pa
 
 Requirements: Docker Desktop or Docker Engine with the Docker CLI.
 
-```bash
+These commands work unchanged in Windows PowerShell, Command Prompt, Bash, and zsh. Run each command
+as one complete line; PowerShell does not use the Bash `\` line-continuation character.
+
+```console
 docker pull alejandroromeroa/ledgerlens:buildweek-2026
 docker volume create ledgerlens-data
-docker run --rm --name ledgerlens -p 8501:8501 \
-  --mount type=volume,source=ledgerlens-data,target=/app/runtime \
-  alejandroromeroa/ledgerlens:buildweek-2026
+docker run --rm --name ledgerlens -p 8501:8501 --mount "type=volume,source=ledgerlens-data,target=/app/runtime" alejandroromeroa/ledgerlens:buildweek-2026
 ```
 
 Open `http://localhost:8501`. Stop the application with `Ctrl+C`. The named volume preserves only
