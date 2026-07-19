@@ -21,10 +21,10 @@
 
 - [x] MIT license selected and included in the repository.
 - [x] Official GitHub and Docker Hub targets are documented with exact judge commands.
-- [ ] English project description finalized.
+- [x] English project description finalized.
 - [ ] Public demo video with audio is under three minutes.
 - [x] Repository is public with MIT licensing and accessible to judges.
 - [x] Public Docker image is versioned, pullable, and verified from the registry.
 - [x] README explains Codex, GPT-5.6, and human decisions.
 - [ ] Majority-work Codex thread Session ID captured through `/feedback`.
-- [ ] Submission instructions and all claims match verified behavior.
+- [x] Submission instructions and all claims match verified behavior.

@@ -1,6 +1,6 @@
 # Devpost submission draft
 
-Status: ready for owner review. Video URL and Codex Session ID remain intentionally blank.
+Status: owner-approved submission copy. Video URL and Codex Session ID remain intentionally blank.
 
 ## Project name
 
@@ -34,12 +34,20 @@ market data.
 
 ## Inspiration
 
+As an amateur investor, I manage investments through more than one brokerage. Each broker presents
+the portfolio through a different dashboard, which makes it difficult to maintain a simple,
+unified view of positions and purchase history. More advanced platforms such as TradingView can be
+valuable, but they can also feel overwhelming when the immediate need is simply to consolidate and
+track personal investments clearly.
+
 Brokerage invoices are evidence of a transaction, but they do not automatically become a
 trustworthy, explainable portfolio history. Manual transcription creates friction and errors, while
 generic AI summaries can blur the line between extracted facts, calculated metrics, and financial
 advice. LedgerLens was designed around a stricter boundary: AI can help interpret a document and
 communicate supplied facts, but a person confirms the record and deterministic code owns the
-financial truth.
+financial truth. LedgerLens began by simplifying a problem that was useful for my own portfolio
+tracking. If that simpler, unified workflow helps me, it may also help other individual investors
+who face the same fragmentation across brokers.
 
 ## What it does
 
@@ -204,4 +212,4 @@ instructions are in `docs/JUDGE_INSTRUCTIONS.md`.
 
 - Public YouTube video URL: `[PENDING]`
 - Majority-work Codex Session ID from `/feedback`: `[PENDING]`
-- Owner approval of this English submission copy: `[PENDING]`
+- Owner approval of this English submission copy: approved on 2026-07-19.
