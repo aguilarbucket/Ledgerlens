@@ -99,7 +99,7 @@ then pulled from Docker Hub and verified:
 No API credential was supplied and no OpenAI, yfinance, Telegram, or application-hosting action
 occurred during the public-image validation.
 
-## Current multi-broker public container verification
+## Multi-broker public container verification (superseded)
 
 The five-invoice release was built from Git commit `4f38f5d` and published as `latest`,
 `buildweek-2026`, and immutable tag `4f38f5d`. All three tags resolve to manifest digest
@@ -115,3 +115,20 @@ hardened runtime reached healthy state and returned HTTP 200 `ok`.
 Docker Scout retained the inherited base-image totals documented in the CVE acknowledgement.
 `--only-fixed` and `--ignore-base` both returned zero findings, so the multi-broker application
 layer introduced no detected CVEs and no available security update was omitted.
+
+## Current auditable-correction public container verification
+
+The correction release was built from Git commit `d89a59e` and published as `latest`,
+`buildweek-2026`, and immutable tag `d89a59e`. Docker Hub reports manifest digest
+`sha256:785085e8c1540dbb2a6125a219b2b1bd2a1c62566bb249ac55efe751411ba513` for all
+three tags on `linux/amd64`. A cache-independent pull confirmed the complete OCI source revision.
+
+The candidate was tested against a named volume initialized by the preceding public image. It
+additively migrated the existing SQLite schema, atomically voided both active lots for one ticker,
+retained all audit records, preserved correction state across a second container and synthetic
+seed synchronization, then restored both lots. The temporary labeled volume was removed afterward.
+
+The packaged Streamlit AppTest reported zero exceptions, seven tabs, and the record-management
+surface. A hardened runtime reached healthy state, returned HTTP 200 `ok`, and ran as UID 999.
+Docker Scout reported the same inherited base-image totals, zero fixable CVEs, and zero CVEs in the
+LedgerLens application layer.

@@ -412,3 +412,15 @@
 - Ruff and compilation passed.
 - Isolated Streamlit AppTest voided one of four records, retained four audit entries, restored the
   record after a rerun, and reported zero exceptions throughout.
+
+### Public release
+
+- Published application commit `d89a59e` as Docker tags `latest`, `buildweek-2026`, and immutable
+  tag `d89a59e`.
+- Docker Hub reports digest
+  `sha256:785085e8c1540dbb2a6125a219b2b1bd2a1c62566bb249ac55efe751411ba513` for all
+  three current tags on `linux/amd64`; a cache-independent pull confirmed the full OCI revision.
+- A volume created by the preceding public image migrated successfully and retained batch void and
+  restore state across independent candidate containers.
+- The hardened container returned HTTP 200 `ok` as UID 999. Docker Scout reported zero fixable
+  CVEs and zero findings attributable to the application layer.

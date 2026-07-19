@@ -204,13 +204,13 @@ Lens. Full instructions are in `docs/JUDGE_INSTRUCTIONS.md`.
 
 ## Verified release references
 
-- Public multi-broker image source revision: `4f38f5d`
-- Current release tags: `latest`, `buildweek-2026`, `4f38f5d`
+- Public application source revision: `d89a59e`
+- Current release tags: `latest`, `buildweek-2026`, `d89a59e`
 - Public image platform: `linux/amd64`
 - Public image manifest digest:
-  `sha256:d1d2ecd8587847bd15af3c136cbf343cbcaddad01f31154d72bbca31f2964d01`
+  `sha256:785085e8c1540dbb2a6125a219b2b1bd2a1c62566bb249ac55efe751411ba513`
 - Verified public source revision:
-  `4f38f5dd42cd90caf3564d9c1ba3f7f09c6bdef2`
+  `d89a59e3d4dd75838c1da4397e76f965de4a9ef1`
 
 ## Pending submission fields
 
