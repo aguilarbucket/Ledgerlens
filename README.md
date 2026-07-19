@@ -207,3 +207,7 @@ licensing, deployment, and submission.
 LedgerLens is descriptive demonstration software, not financial, investment, tax, or legal advice.
 All portfolio values and entities in the demo are fictional. Reported P/L is unrealized because the
 current product records purchases, not sales.
+
+## License
+
+LedgerLens is released under the [MIT License](LICENSE).

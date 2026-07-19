@@ -19,6 +19,7 @@
 
 ## Devpost materials
 
+- [x] MIT license selected and included in the repository.
 - [ ] English project description finalized.
 - [ ] Public demo video with audio is under three minutes.
 - [ ] Repository is public with appropriate licensing or privately shared with the required judges.

@@ -196,3 +196,20 @@
   claimed, while host, clean-environment, and container `pip check` remained clean.
 - No live OpenAI, yfinance, Telegram, deployment, remote push, or publication action occurred in
   this closure validation.
+
+## 2026-07-18 — Submission licensing
+
+### Human decision
+
+- The owner delegated the public repository license choice for the hackathon submission.
+- MIT was selected to provide a short, widely recognized permission grant suitable for public
+  judging, testing, modification, and redistribution.
+
+### Codex contribution
+
+- Added the canonical MIT license with attribution to LedgerLens contributors.
+- Linked the license from the README and recorded it in the submission checklist.
+
+### Boundary
+
+- No Git remote was configured and no repository or container image was published in this step.
