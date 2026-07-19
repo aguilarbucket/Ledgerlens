@@ -1,5 +1,13 @@
 FROM python:3.13-slim
 
+ARG VCS_REF=unknown
+
+LABEL org.opencontainers.image.title="LedgerLens" \
+      org.opencontainers.image.description="Human-verified portfolio intelligence from synthetic brokerage invoices" \
+      org.opencontainers.image.source="https://github.com/aguilarbucket/Ledgerlens" \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.revision="$VCS_REF"
+
 WORKDIR /app
 
 COPY requirements.txt .
