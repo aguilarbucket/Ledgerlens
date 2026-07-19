@@ -116,7 +116,7 @@ Docker Scout retained the inherited base-image totals documented in the CVE ackn
 `--only-fixed` and `--ignore-base` both returned zero findings, so the multi-broker application
 layer introduced no detected CVEs and no available security update was omitted.
 
-## Current auditable-correction public container verification
+## Auditable-correction public container verification (superseded)
 
 The correction release was built from Git commit `d89a59e` and published as `latest`,
 `buildweek-2026`, and immutable tag `d89a59e`. Docker Hub reports manifest digest
@@ -132,3 +132,19 @@ The packaged Streamlit AppTest reported zero exceptions, seven tabs, and the rec
 surface. A hardened runtime reached healthy state, returned HTTP 200 `ok`, and ran as UID 999.
 Docker Scout reported the same inherited base-image totals, zero fixable CVEs, and zero CVEs in the
 LedgerLens application layer.
+
+## Current branding and Project public container verification
+
+The branded Project release was built from Git commit `89800d2` and published as `latest`,
+`buildweek-2026`, and immutable tag `89800d2`. Docker Hub reports manifest digest
+`sha256:19d80fdf70625c20d9a28e49e936ad9a9f950bd27d07651ed526f07d797ef6b6` for all
+three tags on `linux/amd64`; a cache-independent pull confirmed the complete OCI revision.
+
+The packaged image contains exactly five curated branding PNGs, excludes the original ZIP and
+source-pack directory, and contains no `.env`. Streamlit AppTest reported zero exceptions, retained
+seven top-level/nested tabs, confirmed Project replaced About, rendered the embedded local header
+lockup and four-step workflow, and verified both public links. The hardened runtime returned HTTP
+200 `ok` as UID 999.
+
+Docker Scout indexed 197 packages, retained the documented inherited base-image totals, reported
+zero fixable CVEs, and reported zero CVEs attributable to the LedgerLens application layer.

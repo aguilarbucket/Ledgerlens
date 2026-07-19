@@ -18,8 +18,8 @@ Docker Scout exceptions are not used to hide or suppress the findings.
 
 - Image: `alejandroromeroa/ledgerlens:buildweek-2026`
 - Manifest digest:
-  `sha256:785085e8c1540dbb2a6125a219b2b1bd2a1c62566bb249ac55efe751411ba513`
-- Image source revision: `d89a59e3d4dd75838c1da4397e76f965de4a9ef1`
+  `sha256:19d80fdf70625c20d9a28e49e936ad9a9f950bd27d07651ed526f07d797ef6b6`
+- Image source revision: `89800d29b6b7923d521d6ed4c892d3473541fef8`
 - Platform: `linux/amd64`
 - Base image detected by Scout: `python:3.13-slim` on Debian 13 Trixie
 - Scan date: 2026-07-19
@@ -30,8 +30,8 @@ Docker Scout exceptions are not used to hide or suppress the findings.
 `docker scout quickview` reported `1 critical`, `2 high`, `3 medium`, `25 low`, and `7
 unspecified` findings. Scout attributed the same totals to the base image.
 
-These results were revalidated after publishing the auditable record-correction release. The
-immutable `d89a59e` tag, `buildweek-2026`, and `latest` resolve to the evaluated digest above.
+These results were revalidated after publishing the branding and Project release. The immutable
+`89800d2` tag, `buildweek-2026`, and `latest` resolve to the evaluated digest above.
 
 Two follow-up checks materially narrow the result:
 

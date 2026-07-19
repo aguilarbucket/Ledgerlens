@@ -451,3 +451,15 @@
   identity tokens, and Project-flow coverage.
 - Streamlit AppTest reported zero exceptions, retained seven top-level/nested tabs, exposed the
   Project content, and verified both public link targets.
+
+### Public release
+
+- Published application commit `89800d2` as Docker tags `latest`, `buildweek-2026`, and immutable
+  tag `89800d2`.
+- Docker Hub reports digest
+  `sha256:19d80fdf70625c20d9a28e49e936ad9a9f950bd27d07651ed526f07d797ef6b6` for all
+  three current tags on `linux/amd64`; a cache-independent pull confirmed the OCI revision.
+- The image contains exactly the five curated brand PNGs and excludes the owner-provided ZIP and
+  extracted source pack.
+- The hardened container returned HTTP 200 `ok` as UID 999. Docker Scout retained the accepted
+  inherited findings while reporting zero fixable CVEs and zero application-layer findings.
