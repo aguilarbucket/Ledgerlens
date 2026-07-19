@@ -34,6 +34,10 @@ synthetic PDF -> validation -> typed extraction -> editable review -> explicit c
 - Daily and weekly price contributions, comparable periods, concentration, distribution shift,
   best/worst observable day, missing/stale prices, and context quality.
 - Deterministic offline narratives plus optional guarded GPT-5.6 narratives.
+- Responsive fintech dashboard with semantic KPI cards, allocation and portfolio-value charts,
+  Daily/Weekly contribution visualizations, and explicit data-quality panels.
+- Four-step invoice workflow plus read-only purchase-history filters for date, ticker, platform,
+  and source.
 - Local SQLite persistence, automated tests, and a reproducible Docker image.
 
 ## Architecture
@@ -47,9 +51,13 @@ Financial truth and generated language are deliberately separated:
 - `ledgerlens/invoices`: PDF validation, extraction schemas, and confirmation rules.
 - `ledgerlens/ai`: one centralized Responses API client; no financial calculations.
 - `ledgerlens/analysts`: Daily/Weekly narrative orchestration and guardrails.
+- `ledgerlens/ui`: offline design tokens, accessible components, chart specifications, and
+  Streamlit views; it reshapes calculated values but never recalculates financial metrics.
 - `app.py`: Streamlit composition and human review workflow.
 
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for calculation and persistence boundaries.
+The implemented visual system and verification evidence are in
+[`docs/UI_IMPLEMENTATION.md`](docs/UI_IMPLEMENTATION.md).
 
 ## Run locally
 
@@ -81,8 +89,8 @@ Open `http://localhost:8501`. The default creates an ignored database at
 No API key is needed for the reproducible judge path.
 
 ```bash
-docker build -t ledgerlens-buildweek:p0 .
-docker run --rm -p 8501:8501 ledgerlens-buildweek:p0
+docker build -t ledgerlens-buildweek:latest .
+docker run --rm -p 8501:8501 ledgerlens-buildweek:latest
 ```
 
 The container runs as an unprivileged user, includes a health check, and excludes local
@@ -129,10 +137,12 @@ See [`docs/TESTING.md`](docs/TESTING.md) and
 2. In **Import purchase**, download and upload the bundled synthetic invoice.
 3. Use **Offline fixture**, validate the PDF, and inspect the editable typed preview.
 4. Show that saving is rejected until the explicit confirmation checkbox is selected.
-5. Confirm the record and inspect the updated ledger plus truncated document hash.
-6. Open **Daily Lens** and **Weekly Lens** and compare their deterministic KPIs and narrative
-   source labels.
-7. Optionally explain the already-validated GPT-5.6 path; judges do not need a credential.
+5. Confirm the record and inspect the updated dashboard, filtered ledger, and truncated document
+   hash.
+6. Show allocation, observable value, position cards, and the detailed-table fallback.
+7. Open **Daily Lens** and **Weekly Lens** and compare contribution charts, context quality,
+   deterministic KPIs, and narrative source labels.
+8. Optionally explain the already-validated GPT-5.6 path; judges do not need a credential.
 
 The concise recording sequence is in [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md).
 

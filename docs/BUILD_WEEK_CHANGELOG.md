@@ -130,3 +130,33 @@
 - Final tracked-file scans found no API key patterns, personal paths, or private-system names.
 - External `pip-audit` advisory queries timed out; no CVE result is claimed. Host/container
   dependency consistency passed with pinned requirements and `pip check`.
+
+## 2026-07-18 — Fintech UI/UX implementation
+
+### Codex contributions
+
+- Added an offline fintech design system with semantic financial colors, responsive layouts,
+  reduced-motion support, visible focus treatment, and reusable escaped components.
+- Redesigned Portfolio with KPI cards, current allocation, observable value history, compact
+  position cards, platform distribution, and a detailed table fallback.
+- Redesigned Daily and Weekly Lens with deterministic contribution charts, weekly baseline
+  comparison, narrative panels, context quality, and explicit positive/negative text.
+- Added a four-step invoice workflow, source and confidence presentation, privacy explanation,
+  two-column review, and preserved mandatory confirmation.
+- Added read-only purchase-history filters and visible-record summaries without edit or delete
+  operations.
+- Added dedicated analytics for historical portfolio values and platform allocation so financial
+  calculations remain outside the UI layer.
+
+### Validation
+
+- `python -m pytest`: 65 tests passed.
+- `python -m ruff check .` and Python compilation passed.
+- Streamlit AppTest passed with five Altair charts and seven top-level/nested tabs.
+- Browser checks passed at 390, 768, and 1280 px with no global horizontal overflow.
+- The unchecked invoice save was rejected; confirmed save updated invested value from 356,000 to
+  494,000 CLP and retained only the document SHA-256.
+- Browser logs contained no errors; Vega emitted transient warnings during hidden-tab rerenders.
+- Fresh Docker image built successfully, returned HTTP 200 `ok`, ran as UID 999, and rendered the
+  portfolio dashboard.
+- No OpenAI, yfinance, Telegram, remote Git, deployment, or publication action occurred.
