@@ -54,17 +54,18 @@ Runtime dependencies are explicitly pinned in `requirements.txt`. A fresh Docker
 both host/container `pip check` runs completed without conflicts. `docker build --check` reported no
 Dockerfile warnings.
 
-An additional `pip-audit` advisory-service query was attempted three times with bounded timeouts.
-The package installed successfully, but the remote vulnerability service did not return before the
-timeouts, so no CVE result is claimed. This does not replace the verified dependency consistency
-checks and should be retried before public release if the advisory service is available.
+An additional `pip-audit` advisory-service query was attempted three times during P0 and once more
+during technical closure with a bounded 60-second timeout. The package installed successfully, but
+the remote vulnerability service did not return before any timeout, so no CVE result is claimed.
+This does not replace the verified dependency consistency checks and should be retried before
+public release if the advisory service is available.
 
 ## Clean environment
 
-The committed closure tree was exported with `git archive` into a new temporary directory and
-installed into a new virtual environment. Before execution, the export contained no `.git`, `.env`,
-runtime database, or cache. `pip check`, all 67 tests, Ruff, compilation, and Streamlit AppTest
-passed. The temporary environment was then removed.
+The committed application closure tree at `ddf9653` was exported with `git archive` into a new
+temporary directory and installed into a new virtual environment. Before execution, the export
+contained no `.git`, `.env`, runtime database, or cache. `pip check`, all 67 tests, Ruff,
+compilation, and Streamlit AppTest passed. The temporary environment was then removed.
 
 An earlier isolated export exposed that an unanchored `invoices/` ignore rule had hidden the
 `ledgerlens/invoices` source package from Git. The rule was anchored to the root data directory,
