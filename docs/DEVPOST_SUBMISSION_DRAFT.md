@@ -202,12 +202,13 @@ Lens. Full instructions are in `docs/JUDGE_INSTRUCTIONS.md`.
 
 ## Verified release references
 
-- Public image source revision: `0e33758`
-- Public image tags: `latest`, `buildweek-2026`, `0e33758`
+- Public multi-broker image source revision: `4f38f5d`
+- Current release tags: `latest`, `buildweek-2026`, `4f38f5d`
 - Public image platform: `linux/amd64`
 - Public image manifest digest:
-  `sha256:b5c5f85a5c680cb5d1596855986c25a126e11f8e422add7d748a8300ae2917b7`
-- Current public documentation HEAD at draft creation: `1481499`
+  `sha256:d1d2ecd8587847bd15af3c136cbf343cbcaddad01f31154d72bbca31f2964d01`
+- Verified public source revision:
+  `4f38f5dd42cd90caf3564d9c1ba3f7f09c6bdef2`
 
 ## Pending submission fields
 

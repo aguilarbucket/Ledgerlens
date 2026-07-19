@@ -73,7 +73,10 @@ the complete package was committed, and a regression test remains in the current
 
 Status: passed.
 
-## Public container verification
+## Initial public container verification (superseded)
+
+This section records the initial P0 release. The current multi-broker public release is documented
+in the following section.
 
 The public image was built from Git commit `0e33758` with OCI source, revision, title, and MIT
 license metadata. Docker Hub exposes `latest`, `buildweek-2026`, and `0e33758` for `linux/amd64`;
@@ -95,3 +98,20 @@ then pulled from Docker Hub and verified:
 
 No API credential was supplied and no OpenAI, yfinance, Telegram, or application-hosting action
 occurred during the public-image validation.
+
+## Current multi-broker public container verification
+
+The five-invoice release was built from Git commit `4f38f5d` and published as `latest`,
+`buildweek-2026`, and immutable tag `4f38f5d`. All three tags resolve to manifest digest
+`sha256:d1d2ecd8587847bd15af3c136cbf343cbcaddad01f31154d72bbca31f2964d01` for
+`linux/amd64`.
+
+A cache-independent pull of `buildweek-2026` confirmed the expected OCI source revision, five
+bundled synthetic PDFs, five catalog entries, non-root runtime user, and absence of `/app/.env`.
+Offline extraction returned the matching broker, ticker, amount, and reference for every sample.
+Streamlit AppTest completed with zero exceptions, seven tabs, and all five selector options. The
+hardened runtime reached healthy state and returned HTTP 200 `ok`.
+
+Docker Scout retained the inherited base-image totals documented in the CVE acknowledgement.
+`--only-fixed` and `--ignore-base` both returned zero findings, so the multi-broker application
+layer introduced no detected CVEs and no available security update was omitted.

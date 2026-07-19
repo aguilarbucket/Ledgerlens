@@ -367,3 +367,15 @@
 
 - No OpenAI request was made, no API key or private data was exposed, no video was uploaded, and no
   `/feedback` Session ID was captured in this phase.
+
+### Public release
+
+- Published the multi-broker application from commit `4f38f5d` as Docker tags `latest`,
+  `buildweek-2026`, and immutable tag `4f38f5d`.
+- All current release tags resolve to manifest digest
+  `sha256:d1d2ecd8587847bd15af3c136cbf343cbcaddad01f31154d72bbca31f2964d01`.
+- A cache-independent pull confirmed the OCI revision, five bundled invoices, five catalog
+  entries, non-root runtime, absence of `.env`, successful offline extraction, healthy HTTP
+  response, and zero Streamlit AppTest exceptions.
+- Docker Scout reconfirmed that the application layer introduces no detected CVEs and that no
+  fixed CVEs are currently available for the inherited base-image findings.
