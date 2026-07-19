@@ -23,7 +23,7 @@
 - [x] Official GitHub and Docker Hub targets are documented with exact judge commands.
 - [ ] English project description finalized.
 - [ ] Public demo video with audio is under three minutes.
-- [ ] Repository is public with appropriate licensing or privately shared with the required judges.
+- [x] Repository is public with MIT licensing and accessible to judges.
 - [x] README explains Codex, GPT-5.6, and human decisions.
 - [ ] Majority-work Codex thread Session ID captured through `/feedback`.
 - [ ] Submission instructions and all claims match verified behavior.

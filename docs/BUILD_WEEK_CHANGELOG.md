@@ -233,3 +233,24 @@
 - The destination URLs were verified as public. The GitHub repository remains empty and the Docker
   image pull remains pending until the separate publication phase; no remote, push, or deployment
   action occurred here.
+
+## 2026-07-18 — Public GitHub publication
+
+### Human decision
+
+- The owner explicitly authorized proceeding with the public GitHub publication phase using
+  `aguilarbucket/Ledgerlens`.
+
+### Publication
+
+- Configured `origin` as `https://github.com/aguilarbucket/Ledgerlens.git`.
+- Published the complete dated `main` history without force-push or history rewriting.
+- Verified that local and remote `main` resolved to commit `2112304` immediately after the initial
+  push.
+- The repository is public and includes the MIT license, synthetic fixtures, reproducible Docker
+  configuration, judge instructions, provenance, tests, and privacy boundaries.
+
+### Boundary
+
+- No Docker Hub image was pushed and no application hosting or external deployment occurred in
+  this phase.
