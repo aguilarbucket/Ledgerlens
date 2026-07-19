@@ -52,12 +52,16 @@ and are not persisted. History is read-only; no edit or delete operation was add
   editable two-column review; field confidence; and privacy explanation.
 - Purchase history with read-only date, ticker, platform, and source filters plus visible-record
   summaries.
+- Invoice and AI Insight operations with visible stage progress, disabled in-flight controls,
+  explicit completion/error states, and per-session duplicate-request rejection.
+- Explicit AI Insight generation with context/model fingerprint caching; ordinary Streamlit
+  reruns continue to display deterministic text instead of issuing model requests.
 
 ## Executed verification — 2026-07-18
 
 | Check | Result |
 | --- | --- |
-| `python -m pytest` | 65 tests passed |
+| `python -m pytest` | 67 tests passed |
 | `python -m ruff check .` | Passed |
 | Python compilation | Passed |
 | Streamlit AppTest | Passed; seven top-level/nested tabs and five charts discovered |
@@ -70,7 +74,9 @@ and are not persisted. History is read-only; no edit or delete operation was add
 | Container health | HTTP 200 with `ok` |
 | Container privilege | UID 999 |
 | Container UI | Portfolio and all visual components rendered from the built image |
+| Request controls | Synthetic PDF extraction completed with status feedback and editable review |
+| Explicit AI mode | Selecting OpenAI mode exposed a Generate button without issuing a request |
+| Volume persistence | Four synthetic records written in one container and read in a second |
 
 All executed browser data came from the bundled synthetic portfolio and PDF. No OpenAI request,
 yfinance request, Telegram action, deployment, remote push, or publication occurred.
-

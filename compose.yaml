@@ -1,0 +1,19 @@
+services:
+  ledgerlens:
+    build:
+      context: .
+    image: ledgerlens:buildweek-ui
+    ports:
+      - "8501:8501"
+    environment:
+      OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
+      OPENAI_MODEL: "${OPENAI_MODEL:-gpt-5.6}"
+      LEDGERLENS_DEMO_MODE: "${LEDGERLENS_DEMO_MODE:-true}"
+      LEDGERLENS_DATABASE_PATH: "${LEDGERLENS_DATABASE_PATH:-/app/runtime/ledgerlens.db}"
+      LEDGERLENS_MAX_PDF_MB: "${LEDGERLENS_MAX_PDF_MB:-10}"
+    volumes:
+      - ledgerlens-data:/app/runtime
+
+volumes:
+  ledgerlens-data:
+    name: ledgerlens-data

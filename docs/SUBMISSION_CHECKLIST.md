@@ -12,6 +12,10 @@
 - [x] Controlled GPT-5.6 extraction and Daily/Weekly narrative smoke checks pass on synthetic data.
 - [x] Full P0 test matrix passes from a clean environment.
 - [x] Final secret, path, data, and dependency review passes; external CVE query timeout is noted.
+- [x] Long-running OpenAI controls expose progress and reject duplicate in-flight requests.
+- [x] AI Insights require an explicit action and reuse a context-bound session result.
+- [x] Confirmed purchases persist across container replacement through a named Docker volume.
+- [x] Uploaded PDFs, unconfirmed drafts, and credentials remain outside persistent storage.
 
 ## Devpost materials
 

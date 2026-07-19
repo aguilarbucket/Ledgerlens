@@ -9,6 +9,7 @@ import streamlit as st
 from ledgerlens.ai.invoice_extractor import FixtureInvoiceExtractor, OpenAIInvoiceExtractor
 from ledgerlens.ai.openai_client import OpenAIConfigurationError, OpenAIResponsesClient
 from ledgerlens.analysts.daily import build_daily_report
+from ledgerlens.analysts.guardrails import AnalystReport
 from ledgerlens.analysts.narrator import OpenAINarrativeProvider
 from ledgerlens.analysts.weekly import build_weekly_report
 from ledgerlens.analytics.portfolio_dashboard import (
@@ -38,8 +39,57 @@ from ledgerlens.ui.components import (
 from ledgerlens.ui.history import render_purchase_history
 from ledgerlens.ui.insights import render_intelligence_dashboard
 from ledgerlens.ui.portfolio import render_portfolio_dashboard
+from ledgerlens.ui.request_state import (
+    claim_request,
+    finish_request,
+    is_request_busy,
+    queue_request,
+    request_fingerprint,
+)
 from ledgerlens.ui.theme import apply_theme
 from sample_data.demo_data import demo_price_history, demo_prices, demo_purchases
+
+INVOICE_REQUEST_STATE_KEY = "invoice_request_state"
+INSIGHTS_REQUEST_STATE_KEY = "insights_request_state"
+
+
+def _queue_invoice_request() -> None:
+    if queue_request(st.session_state, state_key=INVOICE_REQUEST_STATE_KEY):
+        st.session_state.pop("invoice_request_feedback", None)
+
+
+def _queue_insights_request() -> None:
+    if queue_request(st.session_state, state_key=INSIGHTS_REQUEST_STATE_KEY):
+        st.session_state.pop("insights_request_feedback", None)
+
+
+def _render_request_feedback(feedback: dict[str, str] | None) -> None:
+    if not feedback:
+        return
+    state = feedback.get("state", "complete")
+    st.status(
+        feedback["label"],
+        state="error" if state == "error" else "complete",
+        expanded=False,
+    )
+    if feedback.get("detail"):
+        if state == "error":
+            st.error(feedback["detail"])
+        else:
+            st.caption(feedback["detail"])
+
+
+def _report_to_state(report: AnalystReport) -> dict[str, str | None]:
+    return {"text": report.text, "source": report.source, "warning": report.warning}
+
+
+def _report_from_state(report: dict[str, str | None]) -> AnalystReport:
+    return AnalystReport(
+        text=report["text"] or "",
+        source=report["source"] or "deterministic_fallback",
+        warning=report["warning"],
+    )
+
 
 load_project_environment()
 
@@ -96,6 +146,7 @@ with import_tab:
         "Validate, extract, review, and explicitly confirm one synthetic purchase record.",
     )
     render_workflow_steps(current_step)
+    _render_request_feedback(st.session_state.get("invoice_request_feedback"))
     if extraction_message:
         st.success(extraction_message)
     if saved_message:
@@ -112,45 +163,106 @@ with import_tab:
                 mime="application/pdf",
             )
 
+        invoice_busy = is_request_busy(
+            st.session_state, state_key=INVOICE_REQUEST_STATE_KEY
+        )
         extraction_mode = st.radio(
             "Extraction mode",
             ["Offline fixture", "OpenAI Responses API"],
             horizontal=True,
             help="Offline fixture makes no external request. OpenAI mode requires OPENAI_API_KEY.",
+            key="invoice_extraction_mode",
+            disabled=invoice_busy,
         )
         uploaded_invoice = st.file_uploader(
             "Brokerage invoice (PDF)",
             type=["pdf"],
             accept_multiple_files=False,
             key="invoice_uploader",
+            disabled=invoice_busy,
         )
-        if st.button("Validate and extract", type="primary", disabled=uploaded_invoice is None):
+        st.button(
+            "Processing request..." if invoice_busy else "Validate and extract",
+            type="primary",
+            disabled=uploaded_invoice is None or invoice_busy,
+            on_click=_queue_invoice_request,
+            key="invoice_extract_button",
+        )
+        if claim_request(st.session_state, state_key=INVOICE_REQUEST_STATE_KEY):
+            operation_status = None
             try:
-                pdf = validate_pdf(
-                    filename=uploaded_invoice.name,
-                    mime_type=uploaded_invoice.type,
-                    content=uploaded_invoice.getvalue(),
-                    max_size_mb=int(os.getenv("LEDGERLENS_MAX_PDF_MB", "10")),
-                )
-                if extraction_mode == "Offline fixture":
-                    extractor = FixtureInvoiceExtractor()
-                else:
-                    extractor = OpenAIInvoiceExtractor(OpenAIResponsesClient())
-                extraction = extractor.extract(pdf)
-                st.session_state["invoice_preview"] = {
-                    "extraction": extraction.model_dump(mode="json"),
-                    "document_sha256": pdf.sha256,
-                    "source": extractor.source_name,
-                    "size_bytes": pdf.size_bytes,
-                }
+                if uploaded_invoice is None:
+                    raise ValueError("Select a PDF before starting extraction.")
+                with st.status(
+                    "Processing invoice...",
+                    expanded=True,
+                    state="running",
+                ) as operation_status:
+                    progress = st.progress(10, text="Validating PDF")
+                    pdf = validate_pdf(
+                        filename=uploaded_invoice.name,
+                        mime_type=uploaded_invoice.type,
+                        content=uploaded_invoice.getvalue(),
+                        max_size_mb=int(os.getenv("LEDGERLENS_MAX_PDF_MB", "10")),
+                    )
+                    request_id = request_fingerprint(extraction_mode, pdf.sha256)
+                    operation_status.write("PDF structure and size validated.")
+                    progress.progress(35, text="Preparing extraction")
+
+                    if extraction_mode == "Offline fixture":
+                        extractor = FixtureInvoiceExtractor()
+                        operation_status.write("Using the deterministic offline fixture.")
+                    else:
+                        extractor = OpenAIInvoiceExtractor(OpenAIResponsesClient())
+                        operation_status.write("Waiting for the OpenAI Responses API.")
+                    progress.progress(55, text="Extracting typed fields")
+                    extraction = extractor.extract(pdf)
+                    progress.progress(90, text="Preparing editable review")
+
+                    st.session_state["invoice_preview"] = {
+                        "extraction": extraction.model_dump(mode="json"),
+                        "document_sha256": pdf.sha256,
+                        "request_id": request_id,
+                        "source": extractor.source_name,
+                        "size_bytes": pdf.size_bytes,
+                    }
+                    progress.progress(100, text="Draft ready for human review")
+                    operation_status.update(
+                        label="Invoice extraction completed",
+                        state="complete",
+                        expanded=False,
+                    )
                 st.session_state["invoice_extraction_message"] = (
                     "PDF validated and extracted. Review every field before confirmation."
                 )
-                st.rerun()
+                st.session_state["invoice_request_feedback"] = {
+                    "state": "complete",
+                    "label": "Invoice extraction completed",
+                    "detail": "The editable draft is ready; no PDF was persisted.",
+                }
             except (PDFValidationError, OpenAIConfigurationError, ValueError) as exc:
-                st.error(str(exc))
+                if operation_status is not None:
+                    operation_status.update(
+                        label="Invoice extraction failed", state="error", expanded=True
+                    )
+                st.session_state["invoice_request_feedback"] = {
+                    "state": "error",
+                    "label": "Invoice extraction failed",
+                    "detail": str(exc),
+                }
             except Exception:
-                st.error("Invoice extraction failed. No purchase or PDF was saved.")
+                if operation_status is not None:
+                    operation_status.update(
+                        label="Invoice extraction failed", state="error", expanded=True
+                    )
+                st.session_state["invoice_request_feedback"] = {
+                    "state": "error",
+                    "label": "Invoice extraction failed",
+                    "detail": "No purchase or PDF was saved.",
+                }
+            finally:
+                finish_request(st.session_state, state_key=INVOICE_REQUEST_STATE_KEY)
+            st.rerun()
     with policy_column:
         render_document_policy()
 
@@ -238,25 +350,6 @@ with insights_tab:
         "Reproducible analysis date: 2026-07-18. All KPIs are calculated in Python from "
         "synthetic price history.",
     )
-    narrative_mode = st.radio(
-        "Narrative mode",
-        ["Deterministic offline", "OpenAI Responses API"],
-        horizontal=True,
-        key="analyst_narrative_mode",
-    )
-    narrator = None
-    configuration_warning = None
-    if narrative_mode == "OpenAI Responses API":
-        try:
-            narrator = OpenAINarrativeProvider(OpenAIResponsesClient())
-        except OpenAIConfigurationError as exc:
-            configuration_warning = str(exc)
-    if configuration_warning:
-        st.warning(
-            configuration_warning
-            + " Deterministic reports are shown; no external request was attempted."
-        )
-
     intelligence_date = date(2026, 7, 18)
     intelligence_as_of = datetime(2026, 7, 18, 21, 0, tzinfo=UTC)
     daily_context = build_daily_context(
@@ -271,8 +364,127 @@ with insights_tab:
         report_date=intelligence_date,
         as_of=intelligence_as_of,
     )
-    daily_report = build_daily_report(daily_context, narrator)
-    weekly_report = build_weekly_report(weekly_context, narrator)
+    insights_busy = is_request_busy(
+        st.session_state, state_key=INSIGHTS_REQUEST_STATE_KEY
+    )
+    narrative_mode = st.radio(
+        "Narrative mode",
+        ["Deterministic offline", "OpenAI Responses API"],
+        horizontal=True,
+        key="analyst_narrative_mode",
+        disabled=insights_busy,
+    )
+    model_name = os.getenv("OPENAI_MODEL", "gpt-5.6")
+    context_fingerprint = request_fingerprint(
+        "portfolio-insights",
+        model_name,
+        repr(daily_context),
+        repr(weekly_context),
+    )
+    cached_insights = st.session_state.get("ai_insights_cache")
+    cache_matches = bool(
+        cached_insights and cached_insights.get("fingerprint") == context_fingerprint
+    )
+
+    if narrative_mode == "OpenAI Responses API":
+        st.button(
+            "Generating AI insights..."
+            if insights_busy
+            else "Refresh AI insights"
+            if cache_matches
+            else "Generate AI insights",
+            type="primary",
+            disabled=insights_busy,
+            on_click=_queue_insights_request,
+            key="generate_ai_insights_button",
+        )
+        _render_request_feedback(st.session_state.get("insights_request_feedback"))
+
+    if claim_request(st.session_state, state_key=INSIGHTS_REQUEST_STATE_KEY):
+        operation_status = None
+        try:
+            with st.status(
+                "Generating portfolio narratives...",
+                expanded=True,
+                state="running",
+            ) as operation_status:
+                progress = st.progress(10, text="Preparing deterministic context")
+                narrator = OpenAINarrativeProvider(OpenAIResponsesClient())
+                operation_status.write("Generating the Daily Lens narrative.")
+                progress.progress(35, text="Generating Daily Lens")
+                generated_daily = build_daily_report(daily_context, narrator)
+                operation_status.write("Generating the Weekly Lens narrative.")
+                progress.progress(65, text="Generating Weekly Lens")
+                generated_weekly = build_weekly_report(weekly_context, narrator)
+                progress.progress(95, text="Applying narrative guardrails")
+
+                st.session_state["ai_insights_cache"] = {
+                    "fingerprint": context_fingerprint,
+                    "model": model_name,
+                    "daily": _report_to_state(generated_daily),
+                    "weekly": _report_to_state(generated_weekly),
+                }
+                used_fallback = any(
+                    report.source != "openai_responses_api"
+                    for report in (generated_daily, generated_weekly)
+                )
+                progress.progress(100, text="Narratives ready")
+                operation_status.update(
+                    label=(
+                        "Insights completed with deterministic fallback"
+                        if used_fallback
+                        else "AI insights completed"
+                    ),
+                    state="complete",
+                    expanded=False,
+                )
+                st.session_state["insights_request_feedback"] = {
+                    "state": "complete",
+                    "label": (
+                        "Insights completed with deterministic fallback"
+                        if used_fallback
+                        else "AI insights completed"
+                    ),
+                    "detail": (
+                        "At least one response did not pass the narrative guardrails."
+                        if used_fallback
+                        else f"Daily and Weekly Lens were generated with {model_name}."
+                    ),
+                }
+        except OpenAIConfigurationError as exc:
+            if operation_status is not None:
+                operation_status.update(
+                    label="AI insights could not start", state="error", expanded=True
+                )
+            st.session_state["insights_request_feedback"] = {
+                "state": "error",
+                "label": "AI insights could not start",
+                "detail": f"{exc} Deterministic reports remain available.",
+            }
+        except Exception:
+            if operation_status is not None:
+                operation_status.update(
+                    label="AI insights failed", state="error", expanded=True
+                )
+            st.session_state["insights_request_feedback"] = {
+                "state": "error",
+                "label": "AI insights failed",
+                "detail": "Deterministic reports remain available; no portfolio data changed.",
+            }
+        finally:
+            finish_request(st.session_state, state_key=INSIGHTS_REQUEST_STATE_KEY)
+        st.rerun()
+
+    if narrative_mode == "OpenAI Responses API" and cache_matches:
+        daily_report = _report_from_state(cached_insights["daily"])
+        weekly_report = _report_from_state(cached_insights["weekly"])
+    else:
+        daily_report = build_daily_report(daily_context)
+        weekly_report = build_weekly_report(weekly_context)
+        if narrative_mode == "OpenAI Responses API":
+            st.info(
+                "Deterministic narratives are shown until you explicitly generate AI insights."
+            )
 
     render_intelligence_dashboard(
         daily_context,

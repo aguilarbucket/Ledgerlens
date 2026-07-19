@@ -160,3 +160,37 @@
 - Fresh Docker image built successfully, returned HTTP 200 `ok`, ran as UID 999, and rendered the
   portfolio dashboard.
 - No OpenAI, yfinance, Telegram, remote Git, deployment, or publication action occurred.
+
+## 2026-07-18 — Request control and persistent Docker runtime
+
+### Codex contributions
+
+- Added per-session idle, pending, and running request states with duplicate in-flight rejection.
+- Added visible staged progress and completion/error feedback to invoice extraction.
+- Replaced automatic OpenAI narrative generation on Streamlit reruns with an explicit Generate or
+  Refresh action.
+- Added session-only Daily/Weekly narrative caching keyed by deterministic context and model.
+- Added a named Docker volume configuration that preserves confirmed SQLite purchases across
+  container replacement without persisting uploaded PDFs, drafts, or credentials.
+- Added Docker Compose and updated judge-facing Docker commands.
+
+### Human decisions
+
+- The owner requested visible loading feedback so users cannot start another request while the
+  first response is pending.
+- The owner requested persistence for confirmed changes across container runs while preserving the
+  existing privacy and human-confirmation boundaries.
+
+### Validation
+
+- `python -m pytest`: 67 tests passed.
+- `python -m ruff check .` and Python compilation passed.
+- Streamlit AppTest completed without exceptions.
+- Browser validation loaded and extracted the bundled synthetic PDF through the offline path;
+  completion feedback and the editable review rendered correctly.
+- Selecting OpenAI narrative mode exposed an explicit Generate action and did not make a request.
+- A temporary named volume retained four synthetic repository records across two independent
+  containers and was removed after verification.
+- `ledgerlens:buildweek-ui` rebuilt successfully and its health endpoint returned HTTP 200.
+- No live OpenAI, yfinance, Telegram, deployment, remote push, or publication action occurred in
+  this closure validation.

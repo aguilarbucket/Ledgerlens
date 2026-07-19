@@ -13,6 +13,8 @@ LedgerLens separates financial truth from generated narrative.
 8. Streamlit owns editable preview state; the repository rejects any workflow that has not passed
    explicit human confirmation.
 9. Analyst modules receive structured deterministic context and may only produce narrative.
+10. Per-session request state moves through idle, pending, and running states so invoice and
+    narrative controls remain disabled while a request is in flight.
 
 Historical intelligence uses timestamped fixture prices and confirmed purchases to construct
 comparable snapshots. Market movement excludes the cash effect of purchases made inside the
@@ -21,4 +23,13 @@ serialized KPI contexts and pass through word-count and financial-language guard
 
 SQLite is used locally for traceability and transactional writes. Runtime databases are ignored
 by Git. Confirmed invoice purchases retain the source, confirmation timestamp, document reference,
-and SHA-256; uploaded bytes are not persisted. The repository contains synthetic fixtures only.
+and SHA-256; uploaded bytes are not persisted. In Docker, `/app/runtime` can be mounted to the
+named `ledgerlens-data` volume so confirmed purchases survive container replacement. Credentials,
+uploaded PDFs, unconfirmed drafts, UI filters, and session-cached narratives remain outside that
+volume. The repository contains synthetic fixtures only.
+
+OpenAI actions are explicit UI operations. Invoice extraction has one in-flight operation per
+browser session. Daily and Weekly narratives are generated only after the user selects the live
+mode and presses the generation button; the paired result is cached in session state against a
+fingerprint of the deterministic contexts and configured model. A changed context invalidates the
+cache and returns the UI to the deterministic narrative until the user explicitly generates again.

@@ -18,6 +18,15 @@ Daily Lens and Weekly Lens send only serialized deterministic KPI contexts. Gene
 pass maximum-word and financial-language guardrails. Empty, excessive, advisory, predictive, or
 causal text is rejected and replaced by a clearly labeled deterministic fallback.
 
+## UI request lifecycle
+
+Live operations are initiated only by explicit buttons. While an invoice or paired Daily/Weekly
+request is running, its mode selector and action controls are disabled and a multi-step status is
+shown. Per-session idle, pending, and running states reject re-entry while the first operation is
+in flight. AI Insight results are cached only in Streamlit session state and keyed by a fingerprint
+of the deterministic contexts and configured model, preventing ordinary UI reruns from creating
+new billable calls. No response cache or unconfirmed draft is written to SQLite.
+
 ## Credential boundary
 
 `OPENAI_API_KEY` is read only from the process environment or the ignored project-local `.env`.

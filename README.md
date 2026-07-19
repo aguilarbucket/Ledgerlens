@@ -38,7 +38,10 @@ synthetic PDF -> validation -> typed extraction -> editable review -> explicit c
   Daily/Weekly contribution visualizations, and explicit data-quality panels.
 - Four-step invoice workflow plus read-only purchase-history filters for date, ticker, platform,
   and source.
-- Local SQLite persistence, automated tests, and a reproducible Docker image.
+- Visible multi-step request progress, per-session in-flight locking, and explicit AI Insight
+  generation so Streamlit reruns cannot silently create duplicate model requests.
+- Local SQLite persistence backed by an optional named Docker volume, automated tests, and a
+  reproducible container image.
 
 ## Architecture
 
@@ -89,11 +92,27 @@ Open `http://localhost:8501`. The default creates an ignored database at
 No API key is needed for the reproducible judge path.
 
 ```bash
-docker build -t ledgerlens-buildweek:latest .
-docker run --rm -p 8501:8501 ledgerlens-buildweek:latest
+docker build -t ledgerlens:buildweek-ui .
+docker volume create ledgerlens-data
+docker run --rm -p 8501:8501 \
+  --mount type=volume,source=ledgerlens-data,target=/app/runtime \
+  ledgerlens:buildweek-ui
 ```
 
-The container runs as an unprivileged user, includes a health check, and excludes local
+Add `--env-file .env` before the image name only when testing the live OpenAI path. The named
+`ledgerlens-data` volume retains confirmed purchases when the container is stopped, removed, or
+rebuilt. Uploaded PDFs, unconfirmed drafts, and API credentials are not stored in that volume.
+
+Docker Compose provides the same persistent setup and automatically reads the ignored local
+`.env` file when it exists:
+
+```bash
+docker compose up --build
+docker compose down
+```
+
+Do not use `docker compose down --volumes` unless the confirmed-purchase database should be
+deleted. The container runs as an unprivileged user, includes a health check, and excludes local
 credentials, databases, logs, private PDFs, CSV files, and virtual environments from its build
 context.
 
