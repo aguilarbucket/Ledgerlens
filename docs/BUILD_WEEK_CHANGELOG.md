@@ -301,3 +301,5 @@
   in Windows PowerShell, Command Prompt, Bash, and zsh.
 - Updated the README, judge instructions, and Devpost submission copy without changing or
   rebuilding the verified container image.
+- Added a version-controlled Docker Hub description containing the same cross-platform quickstart
+  and direct links to the public source and judge documentation.
