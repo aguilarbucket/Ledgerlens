@@ -32,5 +32,6 @@
 - [x] Repository is public with MIT licensing and accessible to judges.
 - [x] Public Docker image is versioned, pullable, and verified from the registry.
 - [x] README explains Codex, GPT-5.6, and human decisions.
-- [ ] Majority-work Codex thread Session ID captured through `/feedback`.
+- [x] Majority-work Codex thread Session ID captured through `/feedback`:
+  `019f774d-149c-78e2-b363-28a6ba9205f9`.
 - [x] Submission instructions and all claims match verified behavior.

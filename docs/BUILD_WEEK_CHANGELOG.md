@@ -379,3 +379,10 @@
   response, and zero Streamlit AppTest exceptions.
 - Docker Scout reconfirmed that the application layer introduces no detected CVEs and that no
   fixed CVEs are currently available for the inherited base-image findings.
+
+### Session reference
+
+- The owner supplied and confirmed the majority-work Codex Session ID:
+  `019f774d-149c-78e2-b363-28a6ba9205f9`.
+- The Devpost draft and submission checklist now include the reference. The public video remains
+  the only intentionally pending submission field.

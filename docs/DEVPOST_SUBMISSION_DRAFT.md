@@ -1,6 +1,6 @@
 # Devpost submission draft
 
-Status: owner-approved submission copy. Video URL and Codex Session ID remain intentionally blank.
+Status: owner-approved submission copy. Only the public video URL remains intentionally blank.
 
 ## Project name
 
@@ -213,5 +213,6 @@ Lens. Full instructions are in `docs/JUDGE_INSTRUCTIONS.md`.
 ## Pending submission fields
 
 - Public YouTube video URL: `[PENDING]`
-- Majority-work Codex Session ID from `/feedback`: `[PENDING]`
+- Majority-work Codex Session ID from `/feedback`:
+  `019f774d-149c-78e2-b363-28a6ba9205f9`
 - Owner approval of this English submission copy: approved on 2026-07-19.
