@@ -1,8 +1,9 @@
 # LedgerLens
 
 LedgerLens is an AI-assisted personal portfolio ledger for converting synthetic brokerage PDFs into
-human-verified records and deterministic financial insights. The reproducible judge path runs
-entirely offline and does not require an API key.
+human-verified records and deterministic financial insights. The demo includes five invoices from
+distinct fictional brokers. The reproducible judge path runs entirely offline and does not require
+an API key.
 
 ## Cross-platform quickstart
 

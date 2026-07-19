@@ -40,7 +40,7 @@ Open `http://localhost:8501`. Stop with `Ctrl+C`, then run `docker compose down`
 ## Five-minute verification path
 
 1. Confirm the **Synthetic demo** banner on Portfolio.
-2. Open **Import purchase** and download the bundled synthetic invoice.
+2. Open **Import purchase**, choose one of five fictional broker invoices, and download it.
 3. Upload the same PDF, keep **Offline fixture**, and select **Validate and extract**.
 4. Confirm that the source, field confidence, warning, document hash, and editable review appear.
 5. Attempt to save without the confirmation checkbox and observe the rejection.

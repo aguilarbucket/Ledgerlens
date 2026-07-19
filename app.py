@@ -48,6 +48,7 @@ from ledgerlens.ui.request_state import (
 )
 from ledgerlens.ui.theme import apply_theme
 from sample_data.demo_data import demo_price_history, demo_prices, demo_purchases
+from sample_data.invoice_catalog import SYNTHETIC_INVOICES
 
 INVOICE_REQUEST_STATE_KEY = "invoice_request_state"
 INSIGHTS_REQUEST_STATE_KEY = "insights_request_state"
@@ -154,10 +155,25 @@ with import_tab:
 
     controls_column, policy_column = st.columns([1.15, 0.85])
     with controls_column:
-        sample_pdf_path = Path("output/pdf/ledgerlens_synthetic_invoice.pdf")
-        if sample_pdf_path.exists():
+        available_samples = [
+            spec
+            for spec in SYNTHETIC_INVOICES
+            if (Path("output/pdf") / spec.filename).exists()
+        ]
+        if available_samples:
+            sample_labels = {spec.label: spec for spec in available_samples}
+            selected_sample_label = st.selectbox(
+                "Synthetic invoice sample",
+                list(sample_labels),
+                help=(
+                    "Five fictional brokers and transactions are bundled for reproducible "
+                    "testing."
+                ),
+            )
+            selected_sample = sample_labels[selected_sample_label]
+            sample_pdf_path = Path("output/pdf") / selected_sample.filename
             st.download_button(
-                "Download synthetic demo invoice",
+                "Download selected synthetic invoice",
                 data=sample_pdf_path.read_bytes(),
                 file_name=sample_pdf_path.name,
                 mime="application/pdf",

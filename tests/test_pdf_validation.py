@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 from ledgerlens.invoices.pdf_validation import PDFValidationError, validate_pdf
+from sample_data.invoice_catalog import SYNTHETIC_INVOICES
 
 VALID_PDF = b"%PDF-1.4\nsynthetic content\n%%EOF\n"
 
@@ -43,8 +44,9 @@ def test_rejects_oversized_pdf() -> None:
         )
 
 
-def test_bundled_synthetic_invoice_is_a_valid_pdf() -> None:
-    path = Path("output/pdf/ledgerlens_synthetic_invoice.pdf")
+@pytest.mark.parametrize("spec", SYNTHETIC_INVOICES)
+def test_bundled_synthetic_invoices_are_valid_pdfs(spec) -> None:
+    path = Path("output/pdf") / spec.filename
     result = validate_pdf(
         filename=path.name,
         mime_type="application/pdf",

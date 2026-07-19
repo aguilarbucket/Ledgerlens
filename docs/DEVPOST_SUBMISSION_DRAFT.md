@@ -84,8 +84,9 @@ centralized, reads `OPENAI_API_KEY` only from the environment, uses a configurab
 with `gpt-5.6` as the Build Week default, sends the synthetic PDF in memory, requests structured
 output, sets `store=False`, applies timeouts, and logs only model, latency, and status metadata.
 
-The public demo includes synthetic purchases, fictional companies, fixture price history, and a
-generated one-page brokerage invoice. It is packaged as an unprivileged, health-checked Docker
+The public demo includes synthetic purchases across four fictional brokers, fictional companies,
+fixture price history, and five generated one-page brokerage invoices. It is packaged as an
+unprivileged, health-checked Docker
 image and can run without OpenAI, yfinance, Telegram, or any private system.
 
 ## How Codex was used
@@ -150,7 +151,7 @@ presented as Build Week work.
 - Deterministic Daily and Weekly portfolio intelligence with guarded optional GPT-5.6 narratives.
 - Offline-first fintech interface with semantic financial colors, responsive charts, source labels,
   confidence, context quality, and readable positive/negative states.
-- 67 automated tests plus lint, compilation, Streamlit AppTest, browser, clean-export, Docker,
+- 78 automated tests plus lint, compilation, Streamlit AppTest, browser, clean-export, Docker,
   privacy, and persistence validation.
 - Public MIT-licensed GitHub repository and versioned `linux/amd64` Docker image running as an
   unprivileged user.
@@ -195,9 +196,9 @@ docker volume create ledgerlens-data
 docker run --rm --name ledgerlens -p 127.0.0.1:8501:8501 --mount "type=volume,source=ledgerlens-data,target=/app/runtime" --read-only --tmpfs "/tmp:rw,noexec,nosuid,size=64m" --cap-drop=ALL --security-opt=no-new-privileges:true --pids-limit=256 --memory=1g --cpus=2 alejandroromeroa/ledgerlens:buildweek-2026
 ```
 
-Open `http://localhost:8501`, use the bundled synthetic invoice and Offline fixture extraction,
-confirm the purchase, and inspect Portfolio, Purchase history, Daily Lens, and Weekly Lens. Full
-instructions are in `docs/JUDGE_INSTRUCTIONS.md`.
+Open `http://localhost:8501`, choose one of five bundled synthetic invoices, use Offline fixture
+extraction, confirm the purchase, and inspect Portfolio, Purchase history, Daily Lens, and Weekly
+Lens. Full instructions are in `docs/JUDGE_INSTRUCTIONS.md`.
 
 ## Verified release references
 

@@ -7,6 +7,8 @@
 - [x] Synthetic offline portfolio slice runs without credentials.
 - [x] Initial tests, lint, compilation, and Streamlit smoke test pass.
 - [x] Synthetic invoice PDF is generated and visually verified from fictional data.
+- [x] Five visually verified synthetic invoices cover distinct fictional brokers, tickers, dates,
+  quantities, and amounts.
 - [x] PDF extraction requires editable preview and explicit confirmation.
 - [x] Daily Lens and Weekly Lens are visible in Streamlit with deterministic offline reports.
 - [x] Controlled GPT-5.6 extraction and Daily/Weekly narrative smoke checks pass on synthetic data.
@@ -21,9 +23,11 @@
 
 ## Devpost materials
 
+- [x] Entrant registered and joined OpenAI Build Week on Devpost.
 - [x] MIT license selected and included in the repository.
 - [x] Official GitHub and Docker Hub targets are documented with exact judge commands.
 - [x] English project description finalized.
+- [x] Time-coded English demo script prepared for a target duration under three minutes.
 - [ ] Public demo video with audio is under three minutes.
 - [x] Repository is public with MIT licensing and accessible to judges.
 - [x] Public Docker image is versioned, pullable, and verified from the registry.

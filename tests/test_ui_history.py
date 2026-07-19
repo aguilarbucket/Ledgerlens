@@ -33,6 +33,7 @@ def test_empty_filter_selections_include_full_date_range() -> None:
     )
 
     assert filtered == purchases
+    assert len({purchase.platform for purchase in purchases}) == 4
 
 
 def test_source_labels_are_judge_facing() -> None:

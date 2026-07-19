@@ -10,10 +10,25 @@ from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
-OUTPUT_PATH = Path("output/pdf/ledgerlens_synthetic_invoice.pdf")
+from sample_data.invoice_catalog import (
+    DEFAULT_SYNTHETIC_INVOICE,
+    SYNTHETIC_INVOICES,
+    SyntheticInvoiceSpec,
+)
+
+OUTPUT_DIRECTORY = Path("output/pdf")
+OUTPUT_PATH = OUTPUT_DIRECTORY / DEFAULT_SYNTHETIC_INVOICE.filename
 
 
-def generate_invoice(output_path: Path = OUTPUT_PATH) -> Path:
+def _clp(value: int) -> str:
+    return f"${value:,}".replace(",", ".") + " CLP"
+
+
+def generate_invoice(
+    spec: SyntheticInvoiceSpec = DEFAULT_SYNTHETIC_INVOICE,
+    output_path: Path | None = None,
+) -> Path:
+    output_path = output_path or OUTPUT_DIRECTORY / spec.filename
     output_path.parent.mkdir(parents=True, exist_ok=True)
     styles = getSampleStyleSheet()
     title = ParagraphStyle(
@@ -42,21 +57,21 @@ def generate_invoice(output_path: Path = OUTPUT_PATH) -> Path:
         leftMargin=22 * mm,
         topMargin=18 * mm,
         bottomMargin=18 * mm,
-        title="Synthetic Brokerage Invoice - LedgerLens",
+        title=f"Synthetic Brokerage Invoice - {spec.platform}",
         author="LedgerLens Build Week Demo",
     )
 
     story = [
-        Paragraph("CORREDORA DEMO", title),
+        Paragraph(spec.platform.upper(), title),
         Paragraph("Synthetic brokerage purchase invoice", styles["Heading2"]),
         Spacer(1, 5 * mm),
     ]
     meta = Table(
         [
-            ["Document reference", Paragraph("SYNTH-BW-2026-005", right)],
-            ["Trade date", Paragraph("2026-07-18", right)],
-            ["Settlement currency", Paragraph("CLP", right)],
-            ["Client", Paragraph("Demo Investor 001", right)],
+            ["Document reference", Paragraph(spec.document_reference, right)],
+            ["Trade date", Paragraph(spec.purchase_date.isoformat(), right)],
+            ["Settlement currency", Paragraph(spec.currency, right)],
+            ["Client", Paragraph(spec.client, right)],
         ],
         colWidths=[65 * mm, 80 * mm],
     )
@@ -78,7 +93,13 @@ def generate_invoice(output_path: Path = OUTPUT_PATH) -> Path:
     detail = Table(
         [
             ["Company", "Ticker", "Quantity", "Unit price", "Gross amount"],
-            ["Cordillera Energía", "CORD-A.SN", "150", "$920 CLP", "$138.000 CLP"],
+            [
+                spec.company,
+                spec.ticker,
+                str(spec.quantity),
+                _clp(spec.unit_price),
+                _clp(spec.gross_amount),
+            ],
         ],
         colWidths=[45 * mm, 28 * mm, 24 * mm, 30 * mm, 34 * mm],
     )
@@ -100,7 +121,7 @@ def generate_invoice(output_path: Path = OUTPUT_PATH) -> Path:
         [
             detail,
             Spacer(1, 12 * mm),
-            Paragraph("Total purchase: <b>$138.000 CLP</b>", right),
+            Paragraph(f"Total purchase: <b>{_clp(spec.gross_amount)}</b>", right),
             Spacer(1, 18 * mm),
             Paragraph(
                 "SYNTHETIC DOCUMENT - Generated exclusively for LedgerLens Build Week "
@@ -119,12 +140,31 @@ def generate_invoice(output_path: Path = OUTPUT_PATH) -> Path:
     return output_path
 
 
+def generate_all_invoices() -> list[Path]:
+    return [generate_invoice(spec) for spec in SYNTHETIC_INVOICES]
+
+
 if __name__ == "__main__":
-    generated = generate_invoice()
-    reader = PdfReader(str(generated))
-    text = "\n".join(page.extract_text() or "" for page in reader.pages)
-    required = {"SYNTH-BW-2026-005", "CORD-A.SN", "150", "920", "CLP", "SYNTHETIC DOCUMENT"}
-    missing = sorted(value for value in required if value not in text)
-    if missing:
-        raise RuntimeError(f"Generated PDF is missing required synthetic fields: {missing}")
-    print(f"Generated and verified {generated} ({len(reader.pages)} page)")
+    for spec, generated in zip(SYNTHETIC_INVOICES, generate_all_invoices(), strict=True):
+        reader = PdfReader(str(generated))
+        text = "\n".join(page.extract_text() or "" for page in reader.pages)
+        normalized_text = text.replace(".", "").replace(",", "")
+        required_text = {
+            spec.platform.upper(),
+            spec.document_reference,
+            spec.ticker,
+            spec.currency,
+            "SYNTHETIC DOCUMENT",
+        }
+        required_numbers = {str(spec.quantity), str(spec.unit_price)}
+        missing = sorted(value for value in required_text if value not in text)
+        missing.extend(
+            sorted(value for value in required_numbers if value not in normalized_text)
+        )
+        if missing:
+            raise RuntimeError(
+                f"Generated PDF {generated} is missing required synthetic fields: {missing}"
+            )
+        if len(reader.pages) != 1:
+            raise RuntimeError(f"Generated PDF {generated} must contain exactly one page.")
+        print(f"Generated and verified {generated} ({len(reader.pages)} page)")

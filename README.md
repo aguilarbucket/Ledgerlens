@@ -14,10 +14,12 @@ tracker. The earlier baseline and the new work are separated in
 - Source repository: [github.com/aguilarbucket/Ledgerlens](https://github.com/aguilarbucket/Ledgerlens)
 - Container repository: [alejandroromeroa/ledgerlens](https://hub.docker.com/r/alejandroromeroa/ledgerlens)
 - Judge instructions: [`docs/JUDGE_INSTRUCTIONS.md`](docs/JUDGE_INSTRUCTIONS.md)
+- Demo video script: [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md)
 
 ## The problem and solution
 
-Brokerage invoices are useful evidence but do not automatically form a trustworthy, explainable
+Retail investors may hold positions through multiple brokers, each with a separate dashboard.
+Brokerage invoices are useful evidence but do not automatically form one trustworthy, explainable
 portfolio ledger. LedgerLens validates a PDF, extracts a typed draft, requires a person to review
 and confirm every saved record, calculates portfolio metrics deterministically in Python, and then
 uses GPT-5.6 only to describe supplied facts.
@@ -31,7 +33,8 @@ synthetic PDF -> validation -> typed extraction -> editable review -> explicit c
 
 ## Features
 
-- Fully synthetic portfolio, price history, companies, broker, and one-page brokerage invoice.
+- Fully synthetic portfolio, price history, companies, four-broker seed, and five one-page
+  brokerage invoices from distinct fictional brokers.
 - PDF extension, MIME, size, signature, and EOF validation.
 - Offline fixture extraction and optional GPT-5.6 structured extraction through the Responses API.
 - Editable preview, field-level confidence, warnings, and mandatory human confirmation.
@@ -169,7 +172,8 @@ See [`docs/TESTING.md`](docs/TESTING.md) and
 ## Five-minute judge path
 
 1. Start the app without an API key and confirm the synthetic-data banner.
-2. In **Import purchase**, download and upload the bundled synthetic invoice.
+2. In **Import purchase**, choose one of five bundled synthetic invoices, download it, and upload
+   it back to LedgerLens.
 3. Use **Offline fixture**, validate the PDF, and inspect the editable typed preview.
 4. Show that saving is rejected until the explicit confirmation checkbox is selected.
 5. Confirm the record and inspect the updated dashboard, filtered ledger, and truncated document

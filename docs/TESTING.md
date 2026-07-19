@@ -10,7 +10,8 @@ python -m compileall -q app.py ledgerlens sample_data scripts tests
 
 The suite covers weighted average cost, invested/current value, unrealized P/L, partial and missing
 price coverage, empty portfolios, invalid purchases, SQLite round trips, idempotent demo seeding,
-PDF extension/MIME/size/signature/EOF validation, the bundled synthetic PDF, fixture extraction,
+PDF extension/MIME/size/signature/EOF validation, five bundled synthetic PDFs, filename-bound
+fixture extraction,
 mandatory human confirmation, structured OpenAI request construction, and empty parsed responses.
 It also covers daily and weekly contributions, prior-week comparison, seven-week baseline,
 concentration, allocation shift, best/worst observable day, missing/stale prices, narrative length,
@@ -48,7 +49,7 @@ virtual environment without Git metadata, `.env`, runtime databases, or caches. 
 
 ## Fintech UI verification
 
-The completed UI and request-control pass contains 67 automated tests. Streamlit AppTest discovers
+The current suite contains 78 automated tests. Streamlit AppTest discovers
 the five expected Altair charts and all seven top-level/nested tabs. Browser checks cover 390, 768,
 and 1280 px,
 mandatory confirmation, confirmed portfolio refresh, and absence of error-level console messages.

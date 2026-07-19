@@ -8,12 +8,39 @@ from ledgerlens.ai.openai_client import OpenAIResponseError, OpenAIResponsesClie
 from ledgerlens.invoices.confirmation import ConfirmationRequiredError, confirm_extraction
 from ledgerlens.invoices.models import InvoiceExtraction
 from ledgerlens.invoices.pdf_validation import validate_pdf
+from sample_data.invoice_catalog import DEFAULT_SYNTHETIC_INVOICE, SYNTHETIC_INVOICES
 
 VALID_PDF = b"%PDF-1.4\nsynthetic content\n%%EOF\n"
 
 
-def validated_pdf():
-    return validate_pdf(filename="synthetic.pdf", mime_type="application/pdf", content=VALID_PDF)
+def validated_pdf(filename: str = DEFAULT_SYNTHETIC_INVOICE.filename):
+    return validate_pdf(filename=filename, mime_type="application/pdf", content=VALID_PDF)
+
+
+def test_synthetic_invoice_catalog_has_five_distinct_transactions() -> None:
+    assert len(SYNTHETIC_INVOICES) == 5
+    assert len({spec.filename for spec in SYNTHETIC_INVOICES}) == 5
+    assert len({spec.platform for spec in SYNTHETIC_INVOICES}) == 5
+    assert len({spec.ticker for spec in SYNTHETIC_INVOICES}) == 5
+    assert len({spec.document_reference for spec in SYNTHETIC_INVOICES}) == 5
+
+
+@pytest.mark.parametrize("spec", SYNTHETIC_INVOICES)
+def test_fixture_extracts_each_bundled_synthetic_invoice(spec) -> None:
+    extraction = FixtureInvoiceExtractor().extract(validated_pdf(spec.filename))
+
+    assert extraction.company == spec.company
+    assert extraction.ticker == spec.ticker
+    assert extraction.quantity == spec.quantity
+    assert extraction.unit_price == spec.unit_price
+    assert extraction.purchase_date == spec.purchase_date
+    assert extraction.platform == spec.platform
+    assert extraction.document_reference == spec.document_reference
+
+
+def test_fixture_rejects_unknown_pdf_filename() -> None:
+    with pytest.raises(ValueError, match="five bundled synthetic invoice"):
+        FixtureInvoiceExtractor().extract(validated_pdf("renamed-invoice.pdf"))
 
 
 def test_fixture_extraction_requires_human_confirmation() -> None:

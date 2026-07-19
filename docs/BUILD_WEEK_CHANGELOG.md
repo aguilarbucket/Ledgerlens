@@ -333,3 +333,37 @@
   `no-new-privileges:true`, 256 PIDs, 1 GiB memory, 2 CPUs, and loopback-only port binding.
 - Temporary Alpine, hardened-validation, and volume resources were stopped or removed; no image
   was published and no API key or private data was used.
+
+## 2026-07-19 — Multi-broker demo and video preparation
+
+### Human decisions
+
+- The owner confirmed registration and participation in OpenAI Build Week on Devpost.
+- The owner requested five compatible synthetic invoices covering different brokers, tickers,
+  dates, quantities, and amounts.
+- The public video remains the primary pending deliverable; the majority-work `/feedback` Session
+  ID will be captured last.
+
+### Codex contributions
+
+- Replaced the single hard-coded invoice fixture with a typed five-invoice synthetic catalog.
+- Updated fixture extraction to return the fields belonging to each bundled sample filename and to
+  reject unknown filenames instead of silently returning unrelated fields.
+- Added a five-option invoice selector to Streamlit and distributed the initial portfolio across
+  four fictional brokers so the multi-broker use case is visible.
+- Prepared a 2:45 English demo script covering the problem, working product, GPT-5.6 integration,
+  Codex collaboration, human decisions, and recording-safety checklist.
+
+### Validation
+
+- Generated five distinct one-page A4 PDFs and verified their broker, ticker, transaction fields,
+  document references, and synthetic disclaimers through PDF text extraction.
+- Rendered all five PDFs to PNG and visually verified typography, alignment, table layout,
+  monetary formatting, legibility, and absence of clipping or overlap.
+- The expanded suite passed 78 tests; Ruff and bytecode compilation passed.
+- Streamlit AppTest returned zero exceptions, seven tabs, one sample selector, and five options.
+
+### Boundary
+
+- No OpenAI request was made, no API key or private data was exposed, no video was uploaded, and no
+  `/feedback` Session ID was captured in this phase.
