@@ -254,3 +254,34 @@
 
 - No Docker Hub image was pushed and no application hosting or external deployment occurred in
   this phase.
+
+## 2026-07-18 — Public Docker Hub publication
+
+### Human decision
+
+- The owner explicitly authorized publishing the release image to
+  `alejandroromeroa/ledgerlens` after the public GitHub validation.
+
+### Publication
+
+- Added OCI title, description, source, MIT license, and exact Git revision metadata.
+- Built from Git commit `0e33758` using the current `python:3.13-slim` base.
+- Published `latest`, `buildweek-2026`, and immutable commit tag `0e33758`.
+- Docker Hub reported a single `linux/amd64` manifest digest for all three tags:
+  `sha256:b5c5f85a5c680cb5d1596855986c25a126e11f8e422add7d748a8300ae2917b7`.
+
+### Public pull validation
+
+- Removed the three public-name tags locally while retaining an independent local backup tag, then
+  pulled `alejandroromeroa/ledgerlens:buildweek-2026` from Docker Hub.
+- Confirmed the pulled digest, OCI revision/source/license, UID 999, dependency consistency,
+  synthetic PDF presence, and `.env` absence.
+- Streamlit AppTest returned zero exceptions and seven top-level/nested tabs; container health was
+  HTTP 200 `ok`.
+- A temporary volume retained four synthetic repository records across two independent containers
+  and was removed with the validation container.
+
+### Boundary
+
+- No API key was supplied, no live OpenAI/yfinance/Telegram request occurred, and no hosted
+  application deployment was created.

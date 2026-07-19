@@ -72,3 +72,26 @@ An earlier isolated export exposed that an unanchored `invoices/` ignore rule ha
 the complete package was committed, and a regression test remains in the current 67-test suite.
 
 Status: passed.
+
+## Public container verification
+
+The public image was built from Git commit `0e33758` with OCI source, revision, title, and MIT
+license metadata. Docker Hub exposes `latest`, `buildweek-2026`, and `0e33758` for `linux/amd64`;
+all three resolve to manifest digest
+`sha256:b5c5f85a5c680cb5d1596855986c25a126e11f8e422add7d748a8300ae2917b7`.
+
+To avoid a cache-only result, all three public-name tags were removed locally while preserving the
+independent `ledgerlens:buildweek-ui` backup tag. `alejandroromeroa/ledgerlens:buildweek-2026` was
+then pulled from Docker Hub and verified:
+
+- Pulled repository digest matched the published manifest digest.
+- OCI revision, source, and MIT license matched the source commit and public GitHub repository.
+- Runtime user was UID 999 and `pip check` reported no broken requirements.
+- `/app/.env` was absent and the bundled synthetic PDF was present.
+- Streamlit AppTest completed with zero exceptions and seven top-level/nested tabs.
+- The running health endpoint returned HTTP 200 `ok`.
+- A temporary named volume retained four synthetic records across two independent containers.
+- The validation container and volume were removed afterward; no user data volume was touched.
+
+No API credential was supplied and no OpenAI, yfinance, Telegram, or application-hosting action
+occurred during the public-image validation.
