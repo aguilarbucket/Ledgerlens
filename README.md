@@ -9,6 +9,12 @@ tracker. The earlier baseline and the new work are separated in
 [`docs/PREEXISTING_BASELINE.md`](docs/PREEXISTING_BASELINE.md) and
 [`docs/BUILD_WEEK_CHANGELOG.md`](docs/BUILD_WEEK_CHANGELOG.md).
 
+## Official artifacts
+
+- Source repository: [github.com/aguilarbucket/Ledgerlens](https://github.com/aguilarbucket/Ledgerlens)
+- Container repository: [alejandroromeroa/ledgerlens](https://hub.docker.com/r/alejandroromeroa/ledgerlens)
+- Judge instructions: [`docs/JUDGE_INSTRUCTIONS.md`](docs/JUDGE_INSTRUCTIONS.md)
+
 ## The problem and solution
 
 Brokerage invoices are useful evidence but do not automatically form a trustworthy, explainable
@@ -91,17 +97,29 @@ Open `http://localhost:8501`. The default creates an ignored database at
 
 No API key is needed for the reproducible judge path.
 
+### Published image
+
+```bash
+docker pull alejandroromeroa/ledgerlens:buildweek-2026
+docker volume create ledgerlens-data
+docker run --rm --name ledgerlens -p 8501:8501 \
+  --mount type=volume,source=ledgerlens-data,target=/app/runtime \
+  alejandroromeroa/ledgerlens:buildweek-2026
+```
+
+Open `http://localhost:8501`. Add `--env-file .env` before the image name only when testing the
+live OpenAI path. The named
+`ledgerlens-data` volume retains confirmed purchases when the container is stopped, removed, or
+rebuilt. Uploaded PDFs, unconfirmed drafts, and API credentials are not stored in that volume.
+
+### Build the image locally
+
 ```bash
 docker build -t ledgerlens:buildweek-ui .
-docker volume create ledgerlens-data
-docker run --rm -p 8501:8501 \
+docker run --rm --name ledgerlens-local -p 8501:8501 \
   --mount type=volume,source=ledgerlens-data,target=/app/runtime \
   ledgerlens:buildweek-ui
 ```
-
-Add `--env-file .env` before the image name only when testing the live OpenAI path. The named
-`ledgerlens-data` volume retains confirmed purchases when the container is stopped, removed, or
-rebuilt. Uploaded PDFs, unconfirmed drafts, and API credentials are not stored in that volume.
 
 Docker Compose provides the same persistent setup and automatically reads the ignored local
 `.env` file when it exists:
@@ -164,6 +182,8 @@ See [`docs/TESTING.md`](docs/TESTING.md) and
 8. Optionally explain the already-validated GPT-5.6 path; judges do not need a credential.
 
 The concise recording sequence is in [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md).
+Exact clean-machine commands and expected results are in
+[`docs/JUDGE_INSTRUCTIONS.md`](docs/JUDGE_INSTRUCTIONS.md).
 
 ## GPT-5.6 and human control
 

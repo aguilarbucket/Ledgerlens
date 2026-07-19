@@ -213,3 +213,23 @@
 ### Boundary
 
 - No Git remote was configured and no repository or container image was published in this step.
+
+## 2026-07-18 — Public artifact and judge-instruction preparation
+
+### Human decision
+
+- The owner selected `aguilarbucket/Ledgerlens` as the public source repository and
+  `alejandroromeroa/ledgerlens` as the public Docker Hub repository.
+
+### Codex contribution
+
+- Added canonical GitHub and Docker Hub links to the README.
+- Added exact public-image pull/run commands while retaining a local-build path.
+- Added clean-machine judge instructions with container, source-build, port-conflict, persistence,
+  walkthrough, and expected-boundary guidance.
+
+### Boundary
+
+- The destination URLs were verified as public. The GitHub repository remains empty and the Docker
+  image pull remains pending until the separate publication phase; no remote, push, or deployment
+  action occurred here.

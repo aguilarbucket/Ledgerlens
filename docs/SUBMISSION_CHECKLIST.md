@@ -20,6 +20,7 @@
 ## Devpost materials
 
 - [x] MIT license selected and included in the repository.
+- [x] Official GitHub and Docker Hub targets are documented with exact judge commands.
 - [ ] English project description finalized.
 - [ ] Public demo video with audio is under three minutes.
 - [ ] Repository is public with appropriate licensing or privately shared with the required judges.
