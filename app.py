@@ -26,8 +26,9 @@ from ledgerlens.invoices.confirmation import confirm_extraction
 from ledgerlens.invoices.models import InvoiceExtraction
 from ledgerlens.invoices.pdf_validation import PDFValidationError, validate_pdf
 from ledgerlens.market.market_data_provider import FixtureMarketDataProvider
-from ledgerlens.ui.components import render_app_header, render_notice
-from ledgerlens.ui.formatters import clp, percent
+from ledgerlens.ui.components import render_app_header, render_notice, render_section_header
+from ledgerlens.ui.formatters import clp
+from ledgerlens.ui.insights import render_intelligence_dashboard
 from ledgerlens.ui.portfolio import render_portfolio_dashboard
 from ledgerlens.ui.theme import apply_theme
 from sample_data.demo_data import demo_price_history, demo_prices, demo_purchases
@@ -208,10 +209,10 @@ with history_tab:
     )
 
 with insights_tab:
-    st.subheader("Portfolio intelligence")
-    st.caption(
+    render_section_header(
+        "Portfolio intelligence",
         "Reproducible analysis date: 2026-07-18. All KPIs are calculated in Python from "
-        "synthetic price history."
+        "synthetic price history.",
     )
     narrative_mode = st.radio(
         "Narrative mode",
@@ -249,94 +250,19 @@ with insights_tab:
     daily_report = build_daily_report(daily_context, narrator)
     weekly_report = build_weekly_report(weekly_context, narrator)
 
-    daily_tab, weekly_tab = st.tabs(["Daily Lens", "Weekly Lens"])
-    with daily_tab:
-        daily_one, daily_two, daily_three, daily_four = st.columns(4)
-        daily_one.metric("Portfolio value", clp(daily_context.current_value_clp))
-        daily_two.metric(
-            "Daily observable movement",
-            clp(daily_context.daily_change_clp),
-            percent(daily_context.daily_change_pct),
-        )
-        daily_three.metric("Unrealized P/L", clp(daily_context.unrealized_pnl_clp))
-        daily_four.metric("Price coverage", percent(daily_context.price_coverage_pct))
-        st.markdown(daily_report.text)
-        st.caption(f"Narrative source: {daily_report.source}")
-        if daily_report.warning:
-            st.warning(daily_report.warning)
-        st.dataframe(
-            [
-                {"Ticker": item.ticker, "Daily contribution": clp(item.amount_clp)}
-                for item in daily_context.contributions
-            ],
-            hide_index=True,
-            width="stretch",
-        )
-        if daily_context.missing_price_tickers:
-            st.warning("Missing prices: " + ", ".join(daily_context.missing_price_tickers))
-        if daily_context.stale_price_tickers:
-            st.warning("Stale prices: " + ", ".join(daily_context.stale_price_tickers))
-
-    with weekly_tab:
-        weekly_one, weekly_two, weekly_three, weekly_four = st.columns(4)
-        weekly_one.metric(
-            "Weekly observable movement",
-            clp(weekly_context.current_week_change_clp),
-            percent(weekly_context.current_week_change_pct),
-        )
-        weekly_two.metric(
-            "Difference vs prior week",
-            clp(weekly_context.difference_vs_previous_week_clp),
-        )
-        weekly_three.metric(
-            "Baseline average",
-            clp(weekly_context.baseline_average_change_clp),
-            f"{weekly_context.baseline_weeks} observed weeks",
-        )
-        weekly_four.metric("Price coverage", percent(weekly_context.price_coverage_pct))
-        st.markdown(weekly_report.text)
-        st.caption(f"Narrative source: {weekly_report.source}")
-        if weekly_report.warning:
-            st.warning(weekly_report.warning)
-        st.dataframe(
-            [
-                {"Ticker": item.ticker, "Weekly contribution": clp(item.amount_clp)}
-                for item in weekly_context.contributions
-            ],
-            hide_index=True,
-            width="stretch",
-        )
-        details_left, details_right = st.columns(2)
-        details_left.write(
-            "Positions added: " + (", ".join(weekly_context.positions_added) or "None")
-        )
-        details_left.write(f"Missing invoices: {weekly_context.missing_invoices}")
-        details_left.write(f"Incomplete records: {weekly_context.incomplete_records}")
-        details_right.write(
-            "Best observable day: "
-            + (
-                f"{weekly_context.best_day.movement_date}: "
-                f"{clp(weekly_context.best_day.amount_clp)}"
-                if weekly_context.best_day
-                else "Not available"
-            )
-        )
-        details_right.write(
-            "Worst observable day: "
-            + (
-                f"{weekly_context.worst_day.movement_date}: "
-                f"{clp(weekly_context.worst_day.amount_clp)}"
-                if weekly_context.worst_day
-                else "Not available"
-            )
-        )
+    render_intelligence_dashboard(
+        daily_context,
+        daily_report,
+        weekly_context,
+        weekly_report,
+    )
 
 with about_tab:
     st.markdown(
         """
         LedgerLens provides an offline, deterministic path from synthetic purchases to a calculated
         portfolio. Invoice extraction produces an editable draft and saving requires explicit human
-        confirmation. The Daily/Weekly Lens will be added as separate modules. No model is asked to
-        calculate financial metrics.
+        confirmation. Daily and Weekly Lens provide descriptive context from deterministic Python
+        metrics. No model is asked to calculate financial metrics.
         """
     )

@@ -388,6 +388,64 @@ def stylesheet() -> str:
         border-radius: 999px;
     }}
 
+    .ll-quality-panel {{
+        padding: 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.16);
+        border-radius: var(--ll-radius-md);
+        background: rgba(8, 17, 31, 0.5);
+    }}
+
+    .ll-quality-panel[data-quality="good"] {{ border-left-color: var(--ll-positive); }}
+    .ll-quality-panel[data-quality="partial"] {{ border-left-color: var(--ll-warning); }}
+    .ll-quality-panel[data-quality="insufficient"] {{ border-left-color: var(--ll-negative); }}
+
+    .ll-quality-topline {{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.8rem;
+        margin-bottom: 0.9rem;
+    }}
+
+    .ll-quality-label {{
+        color: var(--ll-text);
+        font-size: 0.86rem;
+        font-weight: 720;
+    }}
+
+    .ll-quality-status {{
+        padding: 0.25rem 0.52rem;
+        border-radius: 999px;
+        background: rgba(148, 163, 184, 0.1);
+        color: var(--ll-text-muted);
+        font-size: 0.7rem;
+        font-weight: 720;
+        letter-spacing: 0.035em;
+        text-transform: uppercase;
+    }}
+
+    .ll-quality-panel[data-quality="good"] .ll-quality-status {{
+        background: rgba(34, 197, 94, 0.1); color: #86EFAC;
+    }}
+    .ll-quality-panel[data-quality="partial"] .ll-quality-status {{
+        background: rgba(245, 185, 66, 0.1); color: #FCD34D;
+    }}
+    .ll-quality-panel[data-quality="insufficient"] .ll-quality-status {{
+        background: rgba(248, 113, 113, 0.1); color: #FCA5A5;
+    }}
+
+    .ll-quality-grid {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }}
+    .ll-quality-grid div {{ min-width: 0; }}
+    .ll-quality-grid span {{ display: block; color: var(--ll-text-muted); font-size: 0.68rem; }}
+    .ll-quality-grid strong {{
+        display: block;
+        margin-top: 0.24rem;
+        overflow-wrap: anywhere;
+        color: #E2E8F0;
+        font-size: 0.77rem;
+        font-weight: 650;
+    }}
+
     @media (max-width: 768px) {{
         .block-container {{ padding: 1rem 1rem 3rem; }}
         .ll-app-header {{ align-items: flex-start; }}
@@ -403,6 +461,7 @@ def stylesheet() -> str:
         .ll-kpi-card {{ min-height: auto; }}
         .ll-position-card {{ min-height: auto; }}
         .ll-platform-labels {{ align-items: flex-start; flex-direction: column; gap: 0.2rem; }}
+        .ll-quality-grid {{ grid-template-columns: 1fr; }}
     }}
 
     @media (prefers-reduced-motion: reduce) {{

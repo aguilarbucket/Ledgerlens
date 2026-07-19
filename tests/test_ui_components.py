@@ -9,8 +9,14 @@ from ledgerlens.ui.components import (
     notice_html,
     platform_allocation_html,
     position_card_html,
+    quality_summary_html,
 )
-from ledgerlens.ui.formatters import clp, semantic_movement, signed_percent
+from ledgerlens.ui.formatters import (
+    clp,
+    percentage_points,
+    semantic_movement,
+    signed_percent,
+)
 from ledgerlens.ui.theme import COLORS, stylesheet
 
 
@@ -94,6 +100,7 @@ def test_financial_formatters_make_direction_explicit() -> None:
     assert clp(Decimal("-2625")) == "-$2.625 CLP"
     assert signed_percent(Decimal("3.25")) == "+3.25%"
     assert semantic_movement(Decimal("-1")) == "Negative"
+    assert percentage_points(Decimal("24.1")) == "+24.10 pp"
 
 
 def test_chart_legend_escapes_labels() -> None:
@@ -101,3 +108,26 @@ def test_chart_legend_escapes_labels() -> None:
 
     assert "SAFE&lt;script&gt;" in html
     assert "SAFE<script>" not in html
+
+
+def test_quality_summary_names_status_and_escapes_tickers() -> None:
+    html = quality_summary_html(
+        quality="partial",
+        coverage="90.00%",
+        missing_tickers=("MISS<script>",),
+        stale_tickers=("OLD.SN",),
+    )
+
+    assert 'data-quality="partial"' in html
+    assert "Partial context" in html
+    assert "MISS&lt;script&gt;" in html
+
+
+def test_quality_summary_rejects_unknown_status() -> None:
+    with pytest.raises(ValueError, match="Unsupported context quality"):
+        quality_summary_html(
+            quality="unknown",
+            coverage="0%",
+            missing_tickers=(),
+            stale_tickers=(),
+        )

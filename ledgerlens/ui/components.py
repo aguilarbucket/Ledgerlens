@@ -127,6 +127,37 @@ def chart_legend_html(items: list[tuple[str, str]]) -> str:
     return f'<div class="ll-chart-legend" aria-label="Chart legend">{entries}</div>'
 
 
+def quality_summary_html(
+    *,
+    quality: str,
+    coverage: str,
+    missing_tickers: tuple[str, ...],
+    stale_tickers: tuple[str, ...],
+) -> str:
+    if quality not in {"good", "partial", "insufficient"}:
+        raise ValueError(f"Unsupported context quality: {quality}")
+    quality_label = {
+        "good": "Good context",
+        "partial": "Partial context",
+        "insufficient": "Insufficient context",
+    }[quality]
+    missing = ", ".join(missing_tickers) or "None"
+    stale = ", ".join(stale_tickers) or "None"
+    return f"""
+<div class="ll-quality-panel" data-quality="{quality}" role="status">
+  <div class="ll-quality-topline">
+    <span class="ll-quality-label">Data quality</span>
+    <span class="ll-quality-status">{quality_label}</span>
+  </div>
+  <div class="ll-quality-grid">
+    <div><span>Price coverage</span><strong>{escape(coverage)}</strong></div>
+    <div><span>Missing prices</span><strong>{escape(missing)}</strong></div>
+    <div><span>Stale prices</span><strong>{escape(stale)}</strong></div>
+  </div>
+</div>
+"""
+
+
 def render_app_header(*, subtitle: str, badge: str = "Synthetic demo") -> None:
     st.markdown(app_header_html(subtitle=subtitle, badge=badge), unsafe_allow_html=True)
 
@@ -200,3 +231,21 @@ def render_platform_allocation(
 
 def render_chart_legend(items: list[tuple[str, str]]) -> None:
     st.markdown(chart_legend_html(items), unsafe_allow_html=True)
+
+
+def render_quality_summary(
+    *,
+    quality: str,
+    coverage: str,
+    missing_tickers: tuple[str, ...],
+    stale_tickers: tuple[str, ...],
+) -> None:
+    st.markdown(
+        quality_summary_html(
+            quality=quality,
+            coverage=coverage,
+            missing_tickers=missing_tickers,
+            stale_tickers=stale_tickers,
+        ),
+        unsafe_allow_html=True,
+    )

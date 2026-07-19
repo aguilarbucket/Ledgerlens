@@ -3,7 +3,12 @@ from __future__ import annotations
 import altair as alt
 
 from ledgerlens.ui.theme import COLORS
-from ledgerlens.ui.view_models import AllocationRecord, HistoryRecord
+from ledgerlens.ui.view_models import (
+    AllocationRecord,
+    ComparisonRecord,
+    ContributionRecord,
+    HistoryRecord,
+)
 
 CHART_PALETTE = [
     COLORS["primary"],
@@ -107,3 +112,74 @@ def portfolio_history_chart(records: list[HistoryRecord]) -> alt.LayerChart:
             description="Observable current and invested portfolio value over time",
         )
     )
+
+
+def contribution_chart(
+    records: list[ContributionRecord], *, description: str
+) -> alt.LayerChart:
+    bars = (
+        alt.Chart(alt.Data(values=records))
+        .mark_bar(cornerRadius=5, size=22)
+        .encode(
+            x=alt.X(
+                "amount_clp:Q",
+                title="Contribution (CLP)",
+                axis=alt.Axis(format="~s", tickCount=5),
+            ),
+            y=alt.Y(
+                "ticker:N",
+                title=None,
+                sort=alt.SortField(field="amount_clp", order="descending"),
+            ),
+            color=alt.Color(
+                "direction:N",
+                scale=alt.Scale(
+                    domain=["Positive", "Negative", "Neutral"],
+                    range=[COLORS["positive"], COLORS["negative"], COLORS["text_muted"]],
+                ),
+                legend=None,
+            ),
+            tooltip=[
+                alt.Tooltip("ticker:N", title="Ticker"),
+                alt.Tooltip("amount_clp:Q", title="Contribution", format=",.0f"),
+                alt.Tooltip("direction:N", title="Direction"),
+            ],
+        )
+    )
+    zero = (
+        alt.Chart(alt.Data(values=[{"zero": 0}]))
+        .mark_rule(color=COLORS["text_muted"], opacity=0.55)
+        .encode(x="zero:Q")
+    )
+    return _chart_base(
+        (bars + zero).properties(height=210, description=description)
+    )
+
+
+def weekly_comparison_chart(records: list[ComparisonRecord]) -> alt.Chart:
+    chart = (
+        alt.Chart(alt.Data(values=records))
+        .mark_bar(cornerRadiusTopLeft=6, cornerRadiusTopRight=6, size=48)
+        .encode(
+            x=alt.X("period:N", title=None, sort=None, axis=alt.Axis(labelAngle=0)),
+            y=alt.Y(
+                "amount_clp:Q",
+                title="Observable movement (CLP)",
+                axis=alt.Axis(format="~s", tickCount=5),
+            ),
+            color=alt.Color(
+                "period:N",
+                scale=alt.Scale(
+                    domain=["Current week", "Prior week", "Baseline average"],
+                    range=[COLORS["primary"], COLORS["secondary"], "#A78BFA"],
+                ),
+                legend=None,
+            ),
+            tooltip=[
+                alt.Tooltip("period:N", title="Comparison"),
+                alt.Tooltip("amount_clp:Q", title="Movement", format=",.0f"),
+            ],
+        )
+        .properties(height=245, description="Weekly movement comparison")
+    )
+    return _chart_base(chart)
