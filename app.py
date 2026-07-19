@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 from datetime import UTC, date, datetime
-from decimal import Decimal
 from pathlib import Path
 
 import streamlit as st
@@ -12,6 +11,10 @@ from ledgerlens.ai.openai_client import OpenAIConfigurationError, OpenAIResponse
 from ledgerlens.analysts.daily import build_daily_report
 from ledgerlens.analysts.narrator import OpenAINarrativeProvider
 from ledgerlens.analysts.weekly import build_weekly_report
+from ledgerlens.analytics.portfolio_dashboard import (
+    build_portfolio_history,
+    calculate_platform_allocations,
+)
 from ledgerlens.analytics.portfolio_intelligence import (
     build_daily_context,
     build_weekly_context,
@@ -24,21 +27,12 @@ from ledgerlens.invoices.models import InvoiceExtraction
 from ledgerlens.invoices.pdf_validation import PDFValidationError, validate_pdf
 from ledgerlens.market.market_data_provider import FixtureMarketDataProvider
 from ledgerlens.ui.components import render_app_header, render_notice
+from ledgerlens.ui.formatters import clp, percent
+from ledgerlens.ui.portfolio import render_portfolio_dashboard
 from ledgerlens.ui.theme import apply_theme
 from sample_data.demo_data import demo_price_history, demo_prices, demo_purchases
 
 load_project_environment()
-
-
-def clp(value: Decimal | None) -> str:
-    if value is None:
-        return "Not available"
-    return f"${value:,.0f} CLP".replace(",", ".")
-
-
-def percent(value: Decimal | None) -> str:
-    return "Not available" if value is None else f"{value:.2f}%"
-
 
 st.set_page_config(page_title="LedgerLens", page_icon="LL", layout="wide")
 apply_theme()
@@ -58,6 +52,9 @@ purchases = repository.list_purchases()
 provider = FixtureMarketDataProvider(demo_prices())
 prices = provider.get_prices({purchase.ticker for purchase in purchases})
 metrics = calculate_portfolio_metrics(purchases, prices)
+price_history = demo_price_history()
+portfolio_history = build_portfolio_history(purchases, price_history)
+platform_allocations = calculate_platform_allocations(purchases)
 
 render_notice(
     "Demo mode: all purchases, companies, document references, and prices are synthetic. "
@@ -69,34 +66,7 @@ portfolio_tab, import_tab, history_tab, insights_tab, about_tab = st.tabs(
 )
 
 with portfolio_tab:
-    first, second, third, fourth = st.columns(4)
-    first.metric("Invested value", clp(metrics.invested_value_clp))
-    second.metric("Current value", clp(metrics.current_value_clp))
-    third.metric("Unrealized P/L", clp(metrics.unrealized_pnl_clp))
-    fourth.metric("Price coverage", percent(metrics.price_coverage_pct))
-
-    st.subheader("Positions")
-    st.dataframe(
-        [
-            {
-                "Company": position.company,
-                "Ticker": position.ticker,
-                "Quantity": float(position.quantity),
-                "Weighted average": clp(position.weighted_average_price_clp),
-                "Current price": clp(position.current_price_clp),
-                "Current value": clp(position.current_value_clp),
-                "Unrealized P/L": clp(position.unrealized_pnl_clp),
-                "Unrealized return": percent(position.unrealized_return_pct),
-                "Allocation": percent(position.allocation_pct),
-            }
-            for position in metrics.positions
-        ],
-        hide_index=True,
-        width="stretch",
-    )
-
-    if metrics.missing_price_tickers:
-        st.warning("Missing prices: " + ", ".join(metrics.missing_price_tickers))
+    render_portfolio_dashboard(metrics, portfolio_history, platform_allocations)
 
 with import_tab:
     st.subheader("Import a brokerage invoice")
@@ -264,16 +234,15 @@ with insights_tab:
 
     intelligence_date = date(2026, 7, 18)
     intelligence_as_of = datetime(2026, 7, 18, 21, 0, tzinfo=UTC)
-    history = demo_price_history()
     daily_context = build_daily_context(
         purchases,
-        history,
+        price_history,
         report_date=intelligence_date,
         as_of=intelligence_as_of,
     )
     weekly_context = build_weekly_context(
         purchases,
-        history,
+        price_history,
         report_date=intelligence_date,
         as_of=intelligence_as_of,
     )

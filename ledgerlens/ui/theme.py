@@ -92,6 +92,13 @@ def stylesheet() -> str:
         overflow: hidden;
     }}
 
+    [data-testid="stVerticalBlockBorderWrapper"] {{
+        border-color: rgba(148, 163, 184, 0.16) !important;
+        border-radius: var(--ll-radius-md) !important;
+        background: linear-gradient(145deg, rgba(17, 27, 46, 0.78), rgba(8, 17, 31, 0.72));
+        box-shadow: 0 16px 38px rgba(0, 0, 0, 0.14);
+    }}
+
     .stButton > button[kind="primary"],
     .stDownloadButton > button {{
         min-height: 2.75rem;
@@ -245,6 +252,142 @@ def stylesheet() -> str:
     .ll-kpi-card[data-tone="negative"] .ll-kpi-delta {{ color: #FCA5A5; }}
     .ll-kpi-card[data-tone="primary"] .ll-kpi-delta {{ color: #93C5FD; }}
 
+    .ll-position-card {{
+        min-height: 18.5rem;
+        padding: 1.05rem;
+        border: 1px solid rgba(148, 163, 184, 0.16);
+        border-radius: var(--ll-radius-md);
+        background: linear-gradient(155deg, rgba(22, 35, 58, 0.96), rgba(12, 23, 40, 0.96));
+        box-shadow: var(--ll-shadow);
+    }}
+
+    .ll-position-card[data-tone="positive"] {{ border-top-color: rgba(34, 197, 94, 0.72); }}
+    .ll-position-card[data-tone="negative"] {{ border-top-color: rgba(248, 113, 113, 0.72); }}
+
+    .ll-position-topline {{
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.75rem;
+    }}
+
+    .ll-position-company {{
+        color: var(--ll-text);
+        font-size: 0.94rem;
+        font-weight: 720;
+    }}
+
+    .ll-position-ticker {{
+        margin-top: 0.18rem;
+        color: var(--ll-text-muted);
+        font-size: 0.74rem;
+        font-weight: 650;
+        letter-spacing: 0.045em;
+    }}
+
+    .ll-position-allocation {{
+        padding: 0.25rem 0.48rem;
+        border: 1px solid rgba(79, 140, 255, 0.25);
+        border-radius: 999px;
+        background: rgba(79, 140, 255, 0.1);
+        color: #BFDBFE;
+        font-size: 0.72rem;
+        font-weight: 700;
+    }}
+
+    .ll-position-value {{
+        margin-top: 1.15rem;
+        color: var(--ll-text);
+        font-size: clamp(1.2rem, 2vw, 1.55rem);
+        font-variant-numeric: tabular-nums;
+        font-weight: 760;
+        letter-spacing: -0.03em;
+    }}
+
+    .ll-position-return {{
+        margin-top: 0.32rem;
+        color: var(--ll-text-muted);
+        font-size: 0.82rem;
+        font-weight: 650;
+    }}
+
+    .ll-position-card[data-tone="positive"] .ll-position-return {{ color: #86EFAC; }}
+    .ll-position-card[data-tone="negative"] .ll-position-return {{ color: #FCA5A5; }}
+
+    .ll-position-details {{
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.85rem 0.7rem;
+        margin: 1.15rem 0 0;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(148, 163, 184, 0.13);
+    }}
+
+    .ll-position-details div {{ min-width: 0; }}
+    .ll-position-details dt {{ color: var(--ll-text-muted); font-size: 0.69rem; }}
+    .ll-position-details dd {{
+        margin: 0.2rem 0 0;
+        overflow-wrap: anywhere;
+        color: #E2E8F0;
+        font-size: 0.77rem;
+        font-variant-numeric: tabular-nums;
+        font-weight: 630;
+    }}
+
+    .ll-platform-row + .ll-platform-row {{ margin-top: 0.9rem; }}
+
+    .ll-platform-labels {{
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 0.42rem;
+        color: #E2E8F0;
+        font-size: 0.82rem;
+        font-weight: 650;
+    }}
+
+    .ll-platform-labels span:last-child {{
+        color: var(--ll-text-muted);
+        font-variant-numeric: tabular-nums;
+        font-weight: 560;
+    }}
+
+    .ll-platform-track {{
+        height: 0.46rem;
+        overflow: hidden;
+        border-radius: 999px;
+        background: rgba(148, 163, 184, 0.12);
+    }}
+
+    .ll-platform-fill {{
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--ll-primary), var(--ll-secondary));
+    }}
+
+    .ll-chart-legend {{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.55rem 0.9rem;
+        margin: -0.25rem 0 0.35rem;
+    }}
+
+    .ll-chart-legend-item {{
+        display: inline-flex;
+        align-items: center;
+        gap: 0.36rem;
+        color: var(--ll-text-muted);
+        font-size: 0.72rem;
+        font-weight: 620;
+    }}
+
+    .ll-chart-legend-dot {{
+        width: 0.52rem;
+        height: 0.52rem;
+        border-radius: 999px;
+    }}
+
     @media (max-width: 768px) {{
         .block-container {{ padding: 1rem 1rem 3rem; }}
         .ll-app-header {{ align-items: flex-start; }}
@@ -257,6 +400,9 @@ def stylesheet() -> str:
         .ll-app-header {{ flex-direction: column; }}
         .ll-brand-mark {{ width: 2.5rem; height: 2.5rem; }}
         .ll-notice {{ padding: 0.75rem; }}
+        .ll-kpi-card {{ min-height: auto; }}
+        .ll-position-card {{ min-height: auto; }}
+        .ll-platform-labels {{ align-items: flex-start; flex-direction: column; gap: 0.2rem; }}
     }}
 
     @media (prefers-reduced-motion: reduce) {{
@@ -273,4 +419,3 @@ def stylesheet() -> str:
 def apply_theme() -> None:
     """Inject LedgerLens theme tokens and responsive application styles."""
     st.markdown(stylesheet(), unsafe_allow_html=True)
-

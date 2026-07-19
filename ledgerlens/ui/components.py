@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from html import escape
+from re import fullmatch
 from typing import Literal
 
 import streamlit as st
@@ -34,7 +35,10 @@ def notice_html(message: str) -> str:
 
 def section_header_html(title: str, description: str | None = None) -> str:
     copy = f'<p class="ll-section-copy">{escape(description)}</p>' if description else ""
-    return f'<h2 class="ll-section-heading">{escape(title)}</h2>{copy}'
+    return (
+        f'<div class="ll-section-heading" role="heading" aria-level="2">'
+        f"{escape(title)}</div>{copy}"
+    )
 
 
 def kpi_card_html(
@@ -54,6 +58,73 @@ def kpi_card_html(
   {delta_html}
 </div>
 """
+
+
+def position_card_html(
+    *,
+    company: str,
+    ticker: str,
+    quantity: str,
+    average_price: str,
+    current_price: str,
+    current_value: str,
+    pnl: str,
+    return_pct: str,
+    allocation: str,
+    movement: str,
+    tone: Tone = "neutral",
+) -> str:
+    if tone not in {"neutral", "primary", "positive", "negative"}:
+        raise ValueError(f"Unsupported position tone: {tone}")
+    return f"""
+<article class="ll-position-card" data-tone="{tone}" aria-label="{escape(ticker)} position">
+  <div class="ll-position-topline">
+    <div>
+      <div class="ll-position-company">{escape(company)}</div>
+      <div class="ll-position-ticker">{escape(ticker)}</div>
+    </div>
+    <span class="ll-position-allocation">{escape(allocation)}</span>
+  </div>
+  <div class="ll-position-value">{escape(current_value)}</div>
+  <div class="ll-position-return">{escape(return_pct)} · {escape(movement)}</div>
+  <dl class="ll-position-details">
+    <div><dt>Quantity</dt><dd>{escape(quantity)}</dd></div>
+    <div><dt>Avg. price</dt><dd>{escape(average_price)}</dd></div>
+    <div><dt>Latest price</dt><dd>{escape(current_price)}</dd></div>
+    <div><dt>Unrealized P/L</dt><dd>{escape(pnl)}</dd></div>
+  </dl>
+</article>
+"""
+
+
+def platform_allocation_html(
+    *, platform: str, invested_value: str, allocation: str, bar_width: float
+) -> str:
+    safe_width = min(max(bar_width, 0.0), 100.0)
+    return f"""
+<div class="ll-platform-row">
+  <div class="ll-platform-labels">
+    <span>{escape(platform)}</span>
+    <span>{escape(invested_value)} · {escape(allocation)}</span>
+  </div>
+  <div class="ll-platform-track" aria-label="{escape(platform)} allocation {escape(allocation)}">
+    <div class="ll-platform-fill" style="width: {safe_width:.2f}%"></div>
+  </div>
+</div>
+"""
+
+
+def chart_legend_html(items: list[tuple[str, str]]) -> str:
+    entries = "".join(
+        (
+            '<span class="ll-chart-legend-item">'
+            f'<span class="ll-chart-legend-dot" style="background: '
+            f'{color if fullmatch(r"#[0-9A-Fa-f]{6}", color) else "#94A3B8"}"></span>'
+            f"{escape(label)}</span>"
+        )
+        for label, color in items
+    )
+    return f'<div class="ll-chart-legend" aria-label="Chart legend">{entries}</div>'
 
 
 def render_app_header(*, subtitle: str, badge: str = "Synthetic demo") -> None:
@@ -79,3 +150,53 @@ def render_kpi_card(
         kpi_card_html(label=label, value=value, delta=delta, tone=tone),
         unsafe_allow_html=True,
     )
+
+
+def render_position_card(
+    *,
+    company: str,
+    ticker: str,
+    quantity: str,
+    average_price: str,
+    current_price: str,
+    current_value: str,
+    pnl: str,
+    return_pct: str,
+    allocation: str,
+    movement: str,
+    tone: Tone = "neutral",
+) -> None:
+    st.markdown(
+        position_card_html(
+            company=company,
+            ticker=ticker,
+            quantity=quantity,
+            average_price=average_price,
+            current_price=current_price,
+            current_value=current_value,
+            pnl=pnl,
+            return_pct=return_pct,
+            allocation=allocation,
+            movement=movement,
+            tone=tone,
+        ),
+        unsafe_allow_html=True,
+    )
+
+
+def render_platform_allocation(
+    *, platform: str, invested_value: str, allocation: str, bar_width: float
+) -> None:
+    st.markdown(
+        platform_allocation_html(
+            platform=platform,
+            invested_value=invested_value,
+            allocation=allocation,
+            bar_width=bar_width,
+        ),
+        unsafe_allow_html=True,
+    )
+
+
+def render_chart_legend(items: list[tuple[str, str]]) -> None:
+    st.markdown(chart_legend_html(items), unsafe_allow_html=True)
