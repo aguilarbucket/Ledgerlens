@@ -4,7 +4,7 @@ services:
       context: .
     image: ledgerlens:buildweek-ui
     ports:
-      - "8501:8501"
+      - "127.0.0.1:8501:8501"
     environment:
       OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
       OPENAI_MODEL: "${OPENAI_MODEL:-gpt-5.6}"
@@ -13,6 +13,16 @@ services:
       LEDGERLENS_MAX_PDF_MB: "${LEDGERLENS_MAX_PDF_MB:-10}"
     volumes:
       - ledgerlens-data:/app/runtime
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256
+    mem_limit: 1g
+    cpus: 2.0
 
 volumes:
   ledgerlens-data:

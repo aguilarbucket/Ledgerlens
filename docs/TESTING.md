@@ -59,3 +59,15 @@ Docker persistence is checked with two separate containers mounting the same tem
 volume. The first writes the bundled synthetic seed through `SQLitePortfolioRepository`; the
 second reads the same four records. The temporary validation volume is removed afterward and the
 user-facing `ledgerlens-data` volume is never touched by automated checks.
+
+## Docker Scout and hardened-runtime validation
+
+The public `buildweek-2026` image was scanned on 2026-07-19 with Docker Scout. The application
+layer reported zero CVEs and the fixable-only view reported zero CVEs. Critical and high findings
+were inherited from the official Debian base and had no compatible fixed package at review time;
+see `docs/SECURITY_CVE_ACKNOWLEDGEMENT.md` for the evidence and acceptance boundary.
+
+The existing public image was also started with a localhost-only port, read-only root filesystem,
+bounded `noexec` and `nosuid` tmpfs, all capabilities dropped, `no-new-privileges`, and CPU, memory,
+and PID limits. It became healthy, returned HTTP 200 `ok`, and continued to run as UID 999. The
+temporary validation container and volume were removed afterward.

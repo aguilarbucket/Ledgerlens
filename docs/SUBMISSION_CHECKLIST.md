@@ -16,6 +16,8 @@
 - [x] AI Insights require an explicit action and reuse a context-bound session result.
 - [x] Confirmed purchases persist across container replacement through a named Docker volume.
 - [x] Uploaded PDFs, unconfirmed drafts, and credentials remain outside persistent storage.
+- [x] Docker Scout findings are acknowledged, inherited/fixable scope is documented, and the
+  judge runtime applies validated compensating controls.
 
 ## Devpost materials
 

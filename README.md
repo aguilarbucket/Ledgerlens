@@ -104,7 +104,7 @@ The following commands work unchanged in Windows PowerShell, Command Prompt, Bas
 ```console
 docker pull alejandroromeroa/ledgerlens:buildweek-2026
 docker volume create ledgerlens-data
-docker run --rm --name ledgerlens -p 8501:8501 --mount "type=volume,source=ledgerlens-data,target=/app/runtime" alejandroromeroa/ledgerlens:buildweek-2026
+docker run --rm --name ledgerlens -p 127.0.0.1:8501:8501 --mount "type=volume,source=ledgerlens-data,target=/app/runtime" --read-only --tmpfs "/tmp:rw,noexec,nosuid,size=64m" --cap-drop=ALL --security-opt=no-new-privileges:true --pids-limit=256 --memory=1g --cpus=2 alejandroromeroa/ledgerlens:buildweek-2026
 ```
 
 Open `http://localhost:8501`. Add `--env-file .env` before the image name only when testing the
@@ -116,7 +116,7 @@ rebuilt. Uploaded PDFs, unconfirmed drafts, and API credentials are not stored i
 
 ```console
 docker build -t ledgerlens:buildweek-ui .
-docker run --rm --name ledgerlens-local -p 8501:8501 --mount "type=volume,source=ledgerlens-data,target=/app/runtime" ledgerlens:buildweek-ui
+docker run --rm --name ledgerlens-local -p 127.0.0.1:8501:8501 --mount "type=volume,source=ledgerlens-data,target=/app/runtime" --read-only --tmpfs "/tmp:rw,noexec,nosuid,size=64m" --cap-drop=ALL --security-opt=no-new-privileges:true --pids-limit=256 --memory=1g --cpus=2 ledgerlens:buildweek-ui
 ```
 
 Docker Compose provides the same persistent setup and automatically reads the ignored local
@@ -201,6 +201,9 @@ processed in memory and is not persisted.
 - No private system is imported or required; Telegram is absent from the P0 runtime.
 - API keys are read only from the process environment or ignored local `.env` and are never logged.
 - No repository remote, publication, deployment, or external service connection is required.
+- The current public-image scan, inherited Debian CVEs, compensating controls, and time-bounded demo
+  acceptance are documented in
+  [`docs/SECURITY_CVE_ACKNOWLEDGEMENT.md`](docs/SECURITY_CVE_ACKNOWLEDGEMENT.md).
 
 ## Limitations
 

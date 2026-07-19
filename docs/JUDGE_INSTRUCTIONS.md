@@ -13,14 +13,15 @@ as one complete line; PowerShell does not use the Bash `\` line-continuation cha
 ```console
 docker pull alejandroromeroa/ledgerlens:buildweek-2026
 docker volume create ledgerlens-data
-docker run --rm --name ledgerlens -p 8501:8501 --mount "type=volume,source=ledgerlens-data,target=/app/runtime" alejandroromeroa/ledgerlens:buildweek-2026
+docker run --rm --name ledgerlens -p 127.0.0.1:8501:8501 --mount "type=volume,source=ledgerlens-data,target=/app/runtime" --read-only --tmpfs "/tmp:rw,noexec,nosuid,size=64m" --cap-drop=ALL --security-opt=no-new-privileges:true --pids-limit=256 --memory=1g --cpus=2 alejandroromeroa/ledgerlens:buildweek-2026
 ```
 
 Open `http://localhost:8501`. Stop the application with `Ctrl+C`. The named volume preserves only
 confirmed SQLite purchases across container replacement. Uploaded PDF bytes, unconfirmed drafts,
 API credentials, and session-cached narratives are not written to the volume.
 
-If port 8501 is already in use, replace `-p 8501:8501` with `-p 8502:8501` and open
+If port 8501 is already in use, replace `-p 127.0.0.1:8501:8501` with
+`-p 127.0.0.1:8502:8501` and open
 `http://localhost:8502`.
 
 ## Option B — Build from the public source repository

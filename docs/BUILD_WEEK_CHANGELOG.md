@@ -303,3 +303,33 @@
   rebuilding the verified container image.
 - Added a version-controlled Docker Hub description containing the same cross-platform quickstart
   and direct links to the public source and judge documentation.
+
+## 2026-07-19 — CVE acknowledgement and runtime hardening
+
+### Scan evidence
+
+- Docker Scout reported `1 critical`, `2 high`, `3 medium`, `25 low`, and `7 unspecified`
+  findings, with identical totals attributed to the official `python:3.13-slim` base.
+- The critical and high findings were all inherited through essential Debian
+  `perl-base 5.40.1-6`; the refreshed Debian Trixie repositories offered no newer candidate.
+- `docker scout cves --only-fixed` and `docker scout cves --ignore-base` both reported zero CVEs.
+- Python dependency consistency remained clean with `pip check`.
+
+### Decision and mitigation
+
+- The owner rejected an Alpine migration for the Build Week demo and authorized a transparent,
+  time-bounded CVE risk acknowledgement.
+- Added a public acknowledgement with the affected CVEs, exposure assessment, patch status,
+  review triggers, and remediation plan.
+- Hardened Docker Compose and every judge quickstart with localhost-only binding, a read-only root
+  filesystem, isolated `noexec`/`nosuid` tmpfs, all capabilities dropped,
+  `no-new-privileges`, and CPU, memory, and PID limits.
+
+### Validation
+
+- The unchanged public image became healthy under all compensating controls, returned HTTP 200
+  `ok`, and continued to run as UID 999.
+- The effective runtime reported read-only rootfs, `CapDrop=ALL`,
+  `no-new-privileges:true`, 256 PIDs, 1 GiB memory, 2 CPUs, and loopback-only port binding.
+- Temporary Alpine, hardened-validation, and volume resources were stopped or removed; no image
+  was published and no API key or private data was used.
