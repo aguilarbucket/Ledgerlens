@@ -16,6 +16,7 @@ receives typed deterministic results and reshapes them into cards, tables, and c
 | Border | `#263653` | Low-contrast structure |
 | Primary | `#4F8CFF` | Navigation and primary information |
 | Secondary | `#2DD4BF` | Supporting series and verified status |
+| Lavender | `#9B87F5` | Brand source diversity and secondary identity accent |
 | Positive | `#22C55E` | Positive financial movement only |
 | Negative | `#F87171` | Negative financial movement only |
 | Warning | `#F5B942` | Partial context and caution |
@@ -34,6 +35,9 @@ also written as Positive, Negative, or Neutral so meaning never depends on color
 - `ledgerlens/ui/charts.py` owns Altair specifications and consumes display records only.
 - `ledgerlens/ui/view_models.py` converts typed deterministic outputs into chart-shaped records.
 - `ledgerlens/ui/portfolio.py`, `insights.py`, and `history.py` compose product views.
+- `ledgerlens/ui/project.py` owns the branded story, workflow, trust, responsibility, and scope
+  presentation.
+- `assets/branding` contains the curated offline page icon, lockups, avatar, and brand board.
 - `ledgerlens/analytics/portfolio_dashboard.py` calculates historical values and platform
   allocation so those calculations do not leak into UI code.
 
@@ -58,6 +62,9 @@ restore a corrected record. A void is explicitly not presented as a sale.
   explicit completion/error states, and per-session duplicate-request rejection.
 - Explicit AI Insight generation with context/model fingerprint caching; ordinary Streamlit
   reruns continue to display deterministic text instead of issuing model requests.
+- Project view with official identity, investor origin story, four-step product flow, privacy and
+  human-control safeguards, Python/OpenAI responsibility boundary, limitations, disclaimer, and
+  public artifact links.
 
 ## Executed verification — 2026-07-18
 
@@ -82,3 +89,15 @@ restore a corrected record. A void is explicitly not presented as a sale.
 
 All executed browser data came from the bundled synthetic portfolio and PDF. No OpenAI request,
 yfinance request, Telegram action, deployment, remote push, or publication occurred.
+
+## Branding and Project verification — 2026-07-19
+
+| Check | Result |
+| --- | --- |
+| Curated assets | Five expected PNGs; dimensions and formats verified |
+| Page icon | 192 × 192 RGBA LedgerLens icon loaded from local assets |
+| Header | Accessible LedgerLens lockup embedded locally with text fallback |
+| Navigation | `Project` replaces `About`; seven top-level/nested tabs retained |
+| Project content | Story, workflow, controls, boundaries, limits, disclaimer, and links present |
+| Streamlit AppTest | Zero exceptions; GitHub and Docker Hub targets verified |
+| Responsive CSS | Four-column flow collapses to two columns and then one column |

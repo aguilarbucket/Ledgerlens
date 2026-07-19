@@ -24,3 +24,5 @@ htmlcov/
 *.csv
 *.pdf
 !output/pdf/*.pdf
+/LedgerLens_brand_pack_v2.zip
+/LedgerLens_brand_pack_v2/

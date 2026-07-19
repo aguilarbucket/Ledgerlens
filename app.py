@@ -5,6 +5,7 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 
 import streamlit as st
+from PIL import Image
 
 from ledgerlens.ai.invoice_extractor import FixtureInvoiceExtractor, OpenAIInvoiceExtractor
 from ledgerlens.ai.openai_client import OpenAIConfigurationError, OpenAIResponsesClient
@@ -39,6 +40,7 @@ from ledgerlens.ui.components import (
 from ledgerlens.ui.history import render_purchase_history
 from ledgerlens.ui.insights import render_intelligence_dashboard
 from ledgerlens.ui.portfolio import render_portfolio_dashboard
+from ledgerlens.ui.project import render_project_page
 from ledgerlens.ui.request_state import (
     claim_request,
     finish_request,
@@ -52,6 +54,10 @@ from sample_data.invoice_catalog import SYNTHETIC_INVOICES
 
 INVOICE_REQUEST_STATE_KEY = "invoice_request_state"
 INSIGHTS_REQUEST_STATE_KEY = "insights_request_state"
+PROJECT_ROOT = Path(__file__).resolve().parent
+BRANDING_DIR = PROJECT_ROOT / "assets" / "branding"
+APP_ICON_PATH = BRANDING_DIR / "ledgerlens-app-icon-192.png"
+HEADER_LOGO_PATH = BRANDING_DIR / "ledgerlens-header-lockup.png"
 
 
 def _queue_invoice_request() -> None:
@@ -94,10 +100,13 @@ def _report_from_state(report: dict[str, str | None]) -> AnalystReport:
 
 load_project_environment()
 
-st.set_page_config(page_title="LedgerLens", page_icon="LL", layout="wide")
+with Image.open(APP_ICON_PATH) as icon_source:
+    page_icon = icon_source.copy()
+st.set_page_config(page_title="LedgerLens", page_icon=page_icon, layout="wide")
 apply_theme()
 render_app_header(
     subtitle="Verified portfolio intelligence with deterministic analytics.",
+    logo_path=HEADER_LOGO_PATH,
 )
 
 demo_mode = os.getenv("LEDGERLENS_DEMO_MODE", "true").lower() in {"1", "true", "yes"}
@@ -122,8 +131,8 @@ render_notice(
     "This is descriptive software, not financial advice."
 )
 
-portfolio_tab, import_tab, history_tab, insights_tab, about_tab = st.tabs(
-    ["Portfolio", "Import purchase", "Purchase history", "AI Insights", "About"]
+portfolio_tab, import_tab, history_tab, insights_tab, project_tab = st.tabs(
+    ["Portfolio", "Import purchase", "Purchase history", "AI Insights", "Project"]
 )
 
 with portfolio_tab:
@@ -536,12 +545,5 @@ with insights_tab:
         weekly_report,
     )
 
-with about_tab:
-    st.markdown(
-        """
-        LedgerLens provides an offline, deterministic path from synthetic purchases to a calculated
-        portfolio. Invoice extraction produces an editable draft and saving requires explicit human
-        confirmation. Daily and Weekly Lens provide descriptive context from deterministic Python
-        metrics. No model is asked to calculate financial metrics.
-        """
-    )
+with project_tab:
+    render_project_page(logo_path=HEADER_LOGO_PATH)

@@ -1,3 +1,12 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/branding/ledgerlens-header-lockup.png">
+    <img src="assets/branding/ledgerlens-lockup-navy.png" alt="LedgerLens" width="420">
+  </picture>
+</p>
+
+<p align="center"><strong>Many sources. One verified view.</strong></p>
+
 # LedgerLens
 
 LedgerLens is an AI-assisted portfolio ledger that turns brokerage invoices into human-verified
@@ -15,6 +24,7 @@ tracker. The earlier baseline and the new work are separated in
 - Container repository: [alejandroromeroa/ledgerlens](https://hub.docker.com/r/alejandroromeroa/ledgerlens)
 - Judge instructions: [`docs/JUDGE_INSTRUCTIONS.md`](docs/JUDGE_INSTRUCTIONS.md)
 - Demo video script: [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md)
+- Brand system: [`docs/BRANDING.md`](docs/BRANDING.md)
 
 ## The problem and solution
 

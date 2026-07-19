@@ -424,3 +424,30 @@
   restore state across independent candidate containers.
 - The hardened container returned HTTP 200 `ok` as UID 999. Docker Scout reported zero fixable
   CVEs and zero findings attributable to the application layer.
+
+## 2026-07-19 — Branding and Project experience
+
+### Human decision
+
+- The owner supplied LedgerLens Brand Pack v2 and authorized its integration into the application.
+- The minimal About tab was retained as a concept but renamed and expanded into a useful Project
+  surface for judges and users.
+
+### Implementation
+
+- Curated five official PNG assets into `assets/branding` while leaving the source pack and ZIP
+  untouched and excluded from Git and Docker build context.
+- Replaced the text favicon and temporary `LL` mark with the official app icon and accessible
+  horizontal lockup.
+- Added the lavender identity token without repurposing performance green.
+- Replaced About with Project: investor origin story, Upload → AI extraction → Human review →
+  Unified portfolio flow, trust controls, Python/OpenAI boundary, current limits, disclaimer, and
+  public GitHub/Docker Hub links.
+- Added responsive Project-flow styling and light/dark README lockups.
+
+### Validation
+
+- Expanded the suite to 88 passing tests, including asset format/dimension, header accessibility,
+  identity tokens, and Project-flow coverage.
+- Streamlit AppTest reported zero exceptions, retained seven top-level/nested tabs, exposed the
+  Project content, and verified both public link targets.

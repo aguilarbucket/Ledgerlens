@@ -15,6 +15,8 @@ LedgerLens separates financial truth from generated narrative.
 9. Analyst modules receive structured deterministic context and may only produce narrative.
 10. Per-session request state moves through idle, pending, and running states so invoice and
     narrative controls remain disabled while a request is in flight.
+11. Curated local PNG assets provide the page icon and responsive header lockup without a network
+    dependency; the Project view owns product story, workflow, trust boundaries, and public links.
 
 Historical intelligence uses timestamped fixture prices and confirmed purchases to construct
 comparable snapshots. Market movement excludes the cash effect of purchases made inside the

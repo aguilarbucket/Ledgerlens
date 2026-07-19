@@ -52,7 +52,7 @@ virtual environment without Git metadata, `.env`, runtime databases, or caches. 
 
 ## Fintech UI verification
 
-The current suite contains 85 automated tests. Streamlit AppTest discovers
+The current suite contains 88 automated tests. Streamlit AppTest discovers
 the five expected Altair charts and all seven top-level/nested tabs. Browser checks cover 390, 768,
 and 1280 px,
 mandatory confirmation, confirmed portfolio refresh, and absence of error-level console messages.
@@ -63,6 +63,10 @@ An isolated Streamlit AppTest also exercised record correction end to end. Voidi
 records reduced the active portfolio to three while retaining all four audit entries and the
 correction reason. Restoring it returned the active portfolio to four after a rerun, with zero
 Streamlit exceptions in both operations.
+
+Branding coverage verifies the five curated PNG formats and dimensions, the official lavender
+identity token, accessible header lockup markup, the four-step Project flow, the absence of source
+pack files from Docker context, both public link targets, and the `Project` navigation label.
 
 Docker persistence is checked with two separate containers mounting the same temporary named
 volume. The first writes the bundled synthetic seed through `SQLitePortfolioRepository`; the

@@ -12,6 +12,7 @@ COLORS = MappingProxyType(
         "border": "#263653",
         "primary": "#4F8CFF",
         "secondary": "#2DD4BF",
+        "lavender": "#9B87F5",
         "positive": "#22C55E",
         "negative": "#F87171",
         "warning": "#F5B942",
@@ -32,6 +33,7 @@ def stylesheet() -> str:
         --ll-border: {COLORS["border"]};
         --ll-primary: {COLORS["primary"]};
         --ll-secondary: {COLORS["secondary"]};
+        --ll-lavender: {COLORS["lavender"]};
         --ll-positive: {COLORS["positive"]};
         --ll-negative: {COLORS["negative"]};
         --ll-warning: {COLORS["warning"]};
@@ -126,6 +128,14 @@ def stylesheet() -> str:
 
     .ll-brand {{ display: flex; align-items: center; gap: 0.9rem; }}
 
+    .ll-brand-identity {{ display: flex; flex-direction: column; align-items: flex-start; }}
+
+    .ll-brand-lockup {{
+        display: block;
+        width: min(18.25rem, 52vw);
+        height: auto;
+    }}
+
     .ll-brand-mark {{
         display: grid;
         width: 2.8rem;
@@ -179,6 +189,53 @@ def stylesheet() -> str:
         border-radius: 999px;
         background: var(--ll-secondary);
         box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.12);
+    }}
+
+    .ll-project-flow {{
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.75rem;
+        margin: 0.8rem 0 1.4rem;
+    }}
+
+    .ll-project-step {{
+        min-height: 8.7rem;
+        padding: 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        border-radius: var(--ll-radius-md);
+        background: linear-gradient(145deg, rgba(17, 27, 46, 0.9), rgba(8, 17, 31, 0.7));
+    }}
+
+    .ll-project-step span {{
+        display: inline-grid;
+        width: 1.8rem;
+        height: 1.8rem;
+        place-items: center;
+        margin-bottom: 0.75rem;
+        border-radius: 999px;
+        background: rgba(79, 140, 255, 0.14);
+        color: #BFDBFE;
+        font-size: 0.72rem;
+        font-weight: 800;
+    }}
+
+    .ll-project-step:nth-child(2) span {{
+        background: rgba(155, 135, 245, 0.14);
+        color: #DDD6FE;
+    }}
+
+    .ll-project-step:nth-child(3) span,
+    .ll-project-step:nth-child(4) span {{
+        background: rgba(45, 212, 191, 0.12);
+        color: #99F6E4;
+    }}
+
+    .ll-project-step strong {{ display: block; color: var(--ll-text); font-size: 0.9rem; }}
+    .ll-project-step p {{
+        margin: 0.35rem 0 0;
+        color: var(--ll-text-muted);
+        font-size: 0.78rem;
+        line-height: 1.45;
     }}
 
     .ll-notice {{
@@ -588,17 +645,20 @@ def stylesheet() -> str:
         [data-baseweb="tab-list"] {{ overflow-x: auto; scrollbar-width: thin; }}
         [data-baseweb="tab"] {{ flex: 0 0 auto; }}
         .ll-workflow {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
+        .ll-project-flow {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
     }}
 
     @media (max-width: 480px) {{
         .ll-app-header {{ flex-direction: column; }}
         .ll-brand-mark {{ width: 2.5rem; height: 2.5rem; }}
+        .ll-brand-lockup {{ width: min(16rem, 78vw); }}
         .ll-notice {{ padding: 0.75rem; }}
         .ll-kpi-card {{ min-height: auto; }}
         .ll-position-card {{ min-height: auto; }}
         .ll-platform-labels {{ align-items: flex-start; flex-direction: column; gap: 0.2rem; }}
         .ll-quality-grid {{ grid-template-columns: 1fr; }}
         .ll-confidence-grid {{ grid-template-columns: 1fr; }}
+        .ll-project-flow {{ grid-template-columns: 1fr; }}
     }}
 
     @media (prefers-reduced-motion: reduce) {{

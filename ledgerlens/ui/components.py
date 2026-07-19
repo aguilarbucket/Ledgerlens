@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+from base64 import b64encode
 from html import escape
+from pathlib import Path
 from re import fullmatch
 from typing import Literal
 
@@ -9,13 +11,27 @@ import streamlit as st
 Tone = Literal["neutral", "primary", "positive", "negative"]
 
 
-def app_header_html(*, subtitle: str, badge: str = "Synthetic demo") -> str:
+def app_header_html(
+    *,
+    subtitle: str,
+    badge: str = "Synthetic demo",
+    logo_data_uri: str | None = None,
+) -> str:
+    if logo_data_uri:
+        brand_identity = (
+            '<img class="ll-brand-lockup" '
+            f'src="{escape(logo_data_uri, quote=True)}" alt="LedgerLens" />'
+        )
+    else:
+        brand_identity = (
+            '<div class="ll-brand-mark" aria-hidden="true">LL</div>'
+            '<div class="ll-brand-name" role="heading" aria-level="1">LedgerLens</div>'
+        )
     return f"""
 <header class="ll-app-header">
   <div class="ll-brand">
-    <div class="ll-brand-mark" aria-hidden="true">LL</div>
-    <div>
-      <div class="ll-brand-name" role="heading" aria-level="1">LedgerLens</div>
+    <div class="ll-brand-identity">
+      {brand_identity}
       <p class="ll-brand-copy">{escape(subtitle)}</p>
     </div>
   </div>
@@ -227,8 +243,26 @@ def confidence_grid_html(confidence: dict[str, float]) -> str:
     return '<div class="ll-confidence-grid">' + "".join(items) + "</div>"
 
 
-def render_app_header(*, subtitle: str, badge: str = "Synthetic demo") -> None:
-    st.markdown(app_header_html(subtitle=subtitle, badge=badge), unsafe_allow_html=True)
+def render_app_header(
+    *,
+    subtitle: str,
+    badge: str = "Synthetic demo",
+    logo_path: str | Path | None = None,
+) -> None:
+    logo_data_uri = None
+    if logo_path is not None:
+        path = Path(logo_path)
+        if path.suffix.lower() != ".png":
+            raise ValueError("The application header logo must be a PNG asset.")
+        logo_data_uri = f"data:image/png;base64,{b64encode(path.read_bytes()).decode('ascii')}"
+    st.markdown(
+        app_header_html(
+            subtitle=subtitle,
+            badge=badge,
+            logo_data_uri=logo_data_uri,
+        ),
+        unsafe_allow_html=True,
+    )
 
 
 def render_notice(message: str) -> None:

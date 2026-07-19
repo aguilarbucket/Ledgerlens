@@ -49,6 +49,8 @@ Open `http://localhost:8501`. Stop with `Ctrl+C`, then run `docker compose down`
    contribution charts, and narrative source labels.
 8. Select **OpenAI Responses API** only to confirm that generation is an explicit action. No live
    request is required and no fallback model is selected silently.
+9. Open **Project** to review the multi-broker origin story, four-step workflow, trust controls,
+   Python/OpenAI responsibility boundary, current limitations, and public project links.
 
 Optional correction check: open **Purchase history** and expand **Manage ledger records**. Select
 one active record or all active lots for its ticker, choose an error/duplicate reason, acknowledge

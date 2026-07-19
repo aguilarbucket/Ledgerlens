@@ -20,6 +20,10 @@
 - [x] Uploaded PDFs, unconfirmed drafts, and credentials remain outside persistent storage.
 - [x] Erroneous or duplicate purchases can be voided and restored without erasing audit history;
   whole-ticker correction is distinct from the unsupported sale workflow.
+- [x] Owner-provided branding is integrated as an offline favicon, app header, README identity,
+  and documented asset system.
+- [x] The former About tab is now a judge-useful Project view with story, workflow, safeguards,
+  responsibility boundaries, limitations, disclaimer, and public links.
 - [x] Docker Scout findings are acknowledged, inherited/fixable scope is documented, and the
   judge runtime applies validated compensating controls.
 

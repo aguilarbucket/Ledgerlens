@@ -29,6 +29,7 @@ def test_fintech_palette_keeps_positive_color_semantic() -> None:
     assert COLORS["positive"] == "#22C55E"
     assert COLORS["primary"] != COLORS["positive"]
     assert COLORS["background"] == "#08111F"
+    assert COLORS["lavender"] == "#9B87F5"
 
 
 def test_stylesheet_is_offline_and_responsive() -> None:
@@ -48,6 +49,18 @@ def test_component_content_is_html_escaped() -> None:
     assert "&lt;script&gt;" in html
     assert "Demo &amp; safe" in html
     assert "Synthetic &lt;only&gt;" in notice
+
+
+def test_app_header_can_render_an_accessible_brand_lockup() -> None:
+    html = app_header_html(
+        subtitle="Verified portfolio",
+        logo_data_uri="data:image/png;base64,c2FmZQ==",
+    )
+
+    assert 'class="ll-brand-lockup"' in html
+    assert 'alt="LedgerLens"' in html
+    assert "data:image/png;base64,c2FmZQ==" in html
+    assert 'class="ll-brand-mark"' not in html
 
 
 def test_kpi_card_exposes_text_and_non_color_tone() -> None:

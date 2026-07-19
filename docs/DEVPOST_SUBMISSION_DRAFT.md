@@ -153,7 +153,7 @@ presented as Build Week work.
 - Deterministic Daily and Weekly portfolio intelligence with guarded optional GPT-5.6 narratives.
 - Offline-first fintech interface with semantic financial colors, responsive charts, source labels,
   confidence, context quality, and readable positive/negative states.
-- 85 automated tests plus lint, compilation, Streamlit AppTest, browser, clean-export, Docker,
+- 88 automated tests plus lint, compilation, Streamlit AppTest, browser, clean-export, Docker,
   privacy, and persistence validation.
 - Public MIT-licensed GitHub repository and versioned `linux/amd64` Docker image running as an
   unprivileged user.
