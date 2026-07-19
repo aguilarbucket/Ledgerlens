@@ -23,6 +23,8 @@ from ledgerlens.invoices.confirmation import confirm_extraction
 from ledgerlens.invoices.models import InvoiceExtraction
 from ledgerlens.invoices.pdf_validation import PDFValidationError, validate_pdf
 from ledgerlens.market.market_data_provider import FixtureMarketDataProvider
+from ledgerlens.ui.components import render_app_header, render_notice
+from ledgerlens.ui.theme import apply_theme
 from sample_data.demo_data import demo_price_history, demo_prices, demo_purchases
 
 load_project_environment()
@@ -38,9 +40,11 @@ def percent(value: Decimal | None) -> str:
     return "Not available" if value is None else f"{value:.2f}%"
 
 
-st.set_page_config(page_title="LedgerLens", page_icon="🔎", layout="wide")
-st.title("LedgerLens")
-st.caption("A verified portfolio ledger with deterministic analytics and synthetic demo data.")
+st.set_page_config(page_title="LedgerLens", page_icon="LL", layout="wide")
+apply_theme()
+render_app_header(
+    subtitle="Verified portfolio intelligence with deterministic analytics.",
+)
 
 demo_mode = os.getenv("LEDGERLENS_DEMO_MODE", "true").lower() in {"1", "true", "yes"}
 if not demo_mode:
@@ -55,7 +59,7 @@ provider = FixtureMarketDataProvider(demo_prices())
 prices = provider.get_prices({purchase.ticker for purchase in purchases})
 metrics = calculate_portfolio_metrics(purchases, prices)
 
-st.info(
+render_notice(
     "Demo mode: all purchases, companies, document references, and prices are synthetic. "
     "This is descriptive software, not financial advice."
 )
