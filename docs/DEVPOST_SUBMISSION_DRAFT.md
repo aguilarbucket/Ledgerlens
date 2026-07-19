@@ -58,12 +58,14 @@ who face the same fragmentation across brokers.
    warnings.
 3. Displays an editable preview and refuses to save until the user explicitly confirms review.
 4. Stores the confirmed purchase and document SHA-256 in SQLite without retaining the uploaded PDF.
-5. Calculates invested value, current value, allocation, price coverage, and unrealized P/L in
+5. Allows an erroneous or duplicate record, or every active lot for a ticker, to be voided with an
+   audit reason and restored without representing the correction as a sale.
+6. Calculates invested value, current value, allocation, price coverage, and unrealized P/L in
    Python.
-6. Produces Daily Lens and Weekly Lens contexts covering observable movement, ticker contribution,
+7. Produces Daily Lens and Weekly Lens contexts covering observable movement, ticker contribution,
    concentration, data coverage, missing or stale prices, prior periods, and historical baseline.
-7. Optionally asks GPT-5.6 to write short factual narratives from those precomputed contexts.
-8. Falls back to deterministic local narratives when credentials, network access, model output, or
+8. Optionally asks GPT-5.6 to write short factual narratives from those precomputed contexts.
+9. Falls back to deterministic local narratives when credentials, network access, model output, or
    guardrail validation is unavailable.
 
 The interface also exposes progress states and disables in-flight controls so an ordinary
@@ -151,7 +153,7 @@ presented as Build Week work.
 - Deterministic Daily and Weekly portfolio intelligence with guarded optional GPT-5.6 narratives.
 - Offline-first fintech interface with semantic financial colors, responsive charts, source labels,
   confidence, context quality, and readable positive/negative states.
-- 78 automated tests plus lint, compilation, Streamlit AppTest, browser, clean-export, Docker,
+- 85 automated tests plus lint, compilation, Streamlit AppTest, browser, clean-export, Docker,
   privacy, and persistence validation.
 - Public MIT-licensed GitHub repository and versioned `linux/amd64` Docker image running as an
   unprivileged user.

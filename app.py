@@ -109,6 +109,7 @@ database_path = Path(os.getenv("LEDGERLENS_DATABASE_PATH", "runtime/ledgerlens.d
 repository = SQLitePortfolioRepository(database_path)
 repository.sync_synthetic_seed(demo_purchases())
 purchases = repository.list_purchases()
+history_purchases = repository.list_purchases(include_voided=True)
 provider = FixtureMarketDataProvider(demo_prices())
 prices = provider.get_prices({purchase.ticker for purchase in purchases})
 metrics = calculate_portfolio_metrics(purchases, prices)
@@ -358,7 +359,33 @@ with import_tab:
                 st.error(str(exc))
 
 with history_tab:
-    render_purchase_history(purchases)
+    history_message = st.session_state.pop("purchase_history_message", None)
+    if history_message:
+        st.success(history_message)
+    history_action = render_purchase_history(history_purchases)
+    if history_action is not None:
+        try:
+            if history_action.kind == "void":
+                changed = repository.void_purchases(
+                    history_action.purchase_ids,
+                    history_action.reason or "Correction",
+                )
+                action_label = "voided"
+                consequence = "Portfolio calculations now exclude them; the audit trail remains."
+            else:
+                changed = repository.restore_purchases(history_action.purchase_ids)
+                action_label = "restored"
+                consequence = "Portfolio calculations now include them again."
+            if changed:
+                noun = "record" if changed == 1 else "records"
+                st.session_state["purchase_history_message"] = (
+                    f"{changed} {noun} {action_label}. {consequence}"
+                )
+                st.rerun()
+            else:
+                st.warning("No records changed. Refresh the page and review the current status.")
+        except ValueError as exc:
+            st.error(str(exc))
 
 with insights_tab:
     render_section_header(

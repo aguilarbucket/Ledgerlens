@@ -19,6 +19,9 @@ class Purchase:
     document_sha256: str | None = None
     source: str = "manual"
     confirmed_at: datetime | None = None
+    status: str = "active"
+    voided_at: datetime | None = None
+    void_reason: str | None = None
 
 
 @dataclass(frozen=True, slots=True)

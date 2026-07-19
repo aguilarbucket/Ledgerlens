@@ -23,8 +23,12 @@ serialized KPI contexts and pass through word-count and financial-language guard
 
 SQLite is used locally for traceability and transactional writes. Runtime databases are ignored
 by Git. Confirmed invoice purchases retain the source, confirmation timestamp, document reference,
-and SHA-256; uploaded bytes are not persisted. In Docker, `/app/runtime` can be mounted to the
-named `ledgerlens-data` volume so confirmed purchases survive container replacement. Credentials,
+SHA-256, active/voided status, correction timestamp, and correction reason; uploaded bytes are not
+persisted. Active records feed portfolio calculations, while voided records remain queryable in the
+audit history and can be restored. Batch voiding uses one SQLite update, and synthetic seed
+synchronization deliberately preserves correction state. Existing databases receive the new audit
+columns through an additive migration. In Docker, `/app/runtime` can be mounted to the named
+`ledgerlens-data` volume so confirmed purchases survive container replacement. Credentials,
 uploaded PDFs, unconfirmed drafts, UI filters, and session-cached narratives remain outside that
 volume. The repository contains synthetic fixtures only.
 

@@ -386,3 +386,29 @@
   `019f774d-149c-78e2-b363-28a6ba9205f9`.
 - The Devpost draft and submission checklist now include the reference. The public video remains
   the only intentionally pending submission field.
+
+## 2026-07-19 — Auditable record correction
+
+### Product decision
+
+- Error and duplicate handling uses reversible voiding instead of destructive deletion.
+- A correction can target one purchase or every active lot for the selected ticker.
+- Voiding is explicitly separated from sales and does not claim to calculate realized P/L.
+
+### Implementation
+
+- Added active/voided status, correction timestamp, and correction reason to persisted purchases.
+- Added an additive migration for existing SQLite volumes and atomic repository operations for
+  batch voiding and restoration.
+- Excluded voided records from portfolio and AI Insight calculations while retaining them in
+  filterable Purchase history.
+- Preserved void state across synthetic seed synchronization and added impact, confirmation,
+  reason, and restore controls to the UI.
+
+### Validation
+
+- Expanded the automated suite to 85 passing tests, including legacy-database migration,
+  idempotency, whole-ticker scope, audit fields, status filters, and seed synchronization.
+- Ruff and compilation passed.
+- Isolated Streamlit AppTest voided one of four records, retained four audit entries, restored the
+  record after a rerun, and reported zero exceptions throughout.

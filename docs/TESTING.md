@@ -20,8 +20,11 @@ It also verifies missing credentials, absence of Telegram from the runtime, fixt
 market data, root-anchored private invoice exclusions, and Docker credential boundaries.
 The UI suite additionally covers escaped component content, semantic movement labels, stable chart
 colors, deterministic view-model reshaping, portfolio history, platform allocation, workflow
-states, confidence visualization, composable read-only history filters, request-state transitions,
-duplicate in-flight rejection, and stable request fingerprints.
+states, confidence visualization, composable history filters, request-state transitions, duplicate
+in-flight rejection, and stable request fingerprints. Repository and UI tests also cover status
+filtering, single-record and whole-ticker correction scope, auditable void/restore fields,
+idempotent batch updates, preservation across synthetic seed synchronization, and migration of an
+existing SQLite database.
 
 Tests must never call OpenAI, Telegram, yfinance, or any other network service.
 
@@ -49,12 +52,17 @@ virtual environment without Git metadata, `.env`, runtime databases, or caches. 
 
 ## Fintech UI verification
 
-The current suite contains 78 automated tests. Streamlit AppTest discovers
+The current suite contains 85 automated tests. Streamlit AppTest discovers
 the five expected Altair charts and all seven top-level/nested tabs. Browser checks cover 390, 768,
 and 1280 px,
 mandatory confirmation, confirmed portfolio refresh, and absence of error-level console messages.
 A fresh image build is healthy at `/_stcore/health`, runs as UID 999, and renders the dashboard.
 See `docs/UI_IMPLEMENTATION.md` for the executed matrix.
+
+An isolated Streamlit AppTest also exercised record correction end to end. Voiding one of four
+records reduced the active portfolio to three while retaining all four audit entries and the
+correction reason. Restoring it returned the active portfolio to four after a rerun, with zero
+Streamlit exceptions in both operations.
 
 Docker persistence is checked with two separate containers mounting the same temporary named
 volume. The first writes the bundled synthetic seed through `SQLitePortfolioRepository`; the

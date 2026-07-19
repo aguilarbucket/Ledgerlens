@@ -18,9 +18,10 @@ docker run --rm --name ledgerlens -p 127.0.0.1:8501:8501 --mount "type=volume,so
 
 Open [http://localhost:8501](http://localhost:8501) and stop the application with `Ctrl+C`.
 
-The named volume preserves confirmed SQLite purchases across container replacement. Uploaded PDF
-bytes, unconfirmed drafts, API credentials, and session-cached narratives are not stored in that
-volume.
+The named volume preserves confirmed SQLite purchases and auditable correction state across
+container replacement. Erroneous or duplicate records can be voided and restored without erasing
+history; corrections are not represented as sales. Uploaded PDF bytes, unconfirmed drafts, API
+credentials, and session-cached narratives are not stored in that volume.
 
 ## Project links
 

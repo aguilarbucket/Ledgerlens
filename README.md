@@ -45,8 +45,10 @@ synthetic PDF -> validation -> typed extraction -> editable review -> explicit c
 - Deterministic offline narratives plus optional guarded GPT-5.6 narratives.
 - Responsive fintech dashboard with semantic KPI cards, allocation and portfolio-value charts,
   Daily/Weekly contribution visualizations, and explicit data-quality panels.
-- Four-step invoice workflow plus read-only purchase-history filters for date, ticker, platform,
-  and source.
+- Four-step invoice workflow plus auditable purchase-history filters for date, ticker, platform,
+  source, and status.
+- Reversible record correction can void one erroneous/duplicate purchase or every active lot for a
+  ticker without erasing history; voided records are excluded from portfolio calculations.
 - Visible multi-step request progress, per-session in-flight locking, and explicit AI Insight
   generation so Streamlit reruns cannot silently create duplicate model requests.
 - Local SQLite persistence backed by an optional named Docker volume, automated tests, and a

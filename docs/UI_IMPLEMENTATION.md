@@ -38,7 +38,9 @@ also written as Positive, Negative, or Neutral so meaning never depends on color
   allocation so those calculations do not leak into UI code.
 
 The invoice path still requires explicit confirmation. Uploaded PDF bytes are processed in memory
-and are not persisted. History is read-only; no edit or delete operation was added.
+and are not persisted. Purchase history supports reversible correction rather than destructive
+deletion: a user can void one record or every active lot for a ticker, supply an audit reason, and
+restore a corrected record. A void is explicitly not presented as a sale.
 
 ## Implemented product surfaces
 
@@ -50,8 +52,8 @@ and are not persisted. History is read-only; no edit or delete operation was add
   best/worst observable days, record integrity, and context quality.
 - Invoice import with Upload, Extract, Review, and Confirm progress; explicit offline/OpenAI source;
   editable two-column review; field confidence; and privacy explanation.
-- Purchase history with read-only date, ticker, platform, and source filters plus visible-record
-  summaries.
+- Purchase history with date, ticker, platform, source, and status filters; visible-record
+  summaries; correction impact preview; confirmed voiding; and restoration.
 - Invoice and AI Insight operations with visible stage progress, disabled in-flight controls,
   explicit completion/error states, and per-session duplicate-request rejection.
 - Explicit AI Insight generation with context/model fingerprint caching; ordinary Streamlit

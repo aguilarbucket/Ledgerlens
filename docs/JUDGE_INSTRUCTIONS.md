@@ -50,11 +50,17 @@ Open `http://localhost:8501`. Stop with `Ctrl+C`, then run `docker compose down`
 8. Select **OpenAI Responses API** only to confirm that generation is an explicit action. No live
    request is required and no fallback model is selected silently.
 
+Optional correction check: open **Purchase history** and expand **Manage ledger records**. Select
+one active record or all active lots for its ticker, choose an error/duplicate reason, acknowledge
+that this is not a sale, and void it. The Portfolio excludes the correction while Purchase history
+retains it under the **Voided** status. The same panel can restore the record.
+
 ## Expected boundaries
 
 - Every displayed company, price, purchase, platform, and PDF is fictional.
 - Python calculates all portfolio metrics; GPT-5.6 is limited to typed extraction and guarded text.
 - Saving an extracted record requires explicit human confirmation.
+- Corrections preserve an audit record; they do not model a sale or realized P/L.
 - The uploaded PDF is processed in memory and is never persisted.
 - The demo does not trade, recommend, predict prices, or claim realized gains.
 
