@@ -114,18 +114,27 @@ No API key is needed for the reproducible judge path.
 
 ### Published image
 
-The following commands work unchanged in Windows PowerShell, Command Prompt, Bash, and zsh:
+The following commands work unchanged in Windows PowerShell, Command Prompt, Bash, and zsh. The
+published-image quickstart deliberately uses host port **8502** so it does not collide with a local
+Streamlit or Docker Compose process already using the usual port 8501:
 
 ```console
 docker pull alejandroromeroa/ledgerlens:buildweek-2026
 docker volume create ledgerlens-data
-docker run --rm --name ledgerlens -p 127.0.0.1:8501:8501 --mount "type=volume,source=ledgerlens-data,target=/app/runtime" --read-only --tmpfs "/tmp:rw,noexec,nosuid,size=64m" --cap-drop=ALL --security-opt=no-new-privileges:true --pids-limit=256 --memory=1g --cpus=2 alejandroromeroa/ledgerlens:buildweek-2026
+docker run -d --rm --name ledgerlens -p 127.0.0.1:8502:8501 --mount "type=volume,source=ledgerlens-data,target=/app/runtime" --read-only --tmpfs "/tmp:rw,noexec,nosuid,size=64m" --cap-drop=ALL --security-opt=no-new-privileges:true --pids-limit=256 --memory=1g --cpus=2 alejandroromeroa/ledgerlens:buildweek-2026
 ```
 
-Open `http://localhost:8501`. Add `--env-file .env` before the image name only when testing the
-live OpenAI path. The named
+Open `http://localhost:8502`. Check status with `docker ps --filter name=ledgerlens` and stop the
+application with `docker stop ledgerlens`. Add `--env-file .env` before the image name only when
+testing the live OpenAI path. The named
 `ledgerlens-data` volume retains confirmed purchases when the container is stopped, removed, or
 rebuilt. Uploaded PDFs, unconfirmed drafts, and API credentials are not stored in that volume.
+
+If Docker reports `Bind for 127.0.0.1:8502 failed: port is already allocated`, run
+`docker ps --filter publish=8502` to identify the owner. Stop it only if it is your stale container,
+or change the host side of the mapping to `-p 127.0.0.1:8503:8501` and open
+`http://localhost:8503`. If Docker instead reports that the name `ledgerlens` is already in use,
+inspect it with `docker ps -a --filter name=ledgerlens` before stopping or removing it.
 
 ### Build the image locally
 

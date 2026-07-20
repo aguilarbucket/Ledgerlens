@@ -8,21 +8,24 @@ connection, or external market service is required for the reproducible judge pa
 Requirements: Docker Desktop or Docker Engine with the Docker CLI.
 
 These commands work unchanged in Windows PowerShell, Command Prompt, Bash, and zsh. Run each command
-as one complete line; PowerShell does not use the Bash `\` line-continuation character.
+as one complete line; PowerShell does not use the Bash `\` line-continuation character. This path
+uses host port 8502 to avoid collisions with local Streamlit or Docker Compose processes on 8501.
 
 ```console
 docker pull alejandroromeroa/ledgerlens:buildweek-2026
 docker volume create ledgerlens-data
-docker run --rm --name ledgerlens -p 127.0.0.1:8501:8501 --mount "type=volume,source=ledgerlens-data,target=/app/runtime" --read-only --tmpfs "/tmp:rw,noexec,nosuid,size=64m" --cap-drop=ALL --security-opt=no-new-privileges:true --pids-limit=256 --memory=1g --cpus=2 alejandroromeroa/ledgerlens:buildweek-2026
+docker run -d --rm --name ledgerlens -p 127.0.0.1:8502:8501 --mount "type=volume,source=ledgerlens-data,target=/app/runtime" --read-only --tmpfs "/tmp:rw,noexec,nosuid,size=64m" --cap-drop=ALL --security-opt=no-new-privileges:true --pids-limit=256 --memory=1g --cpus=2 alejandroromeroa/ledgerlens:buildweek-2026
 ```
 
-Open `http://localhost:8501`. Stop the application with `Ctrl+C`. The named volume preserves only
-confirmed SQLite purchases across container replacement. Uploaded PDF bytes, unconfirmed drafts,
-API credentials, and session-cached narratives are not written to the volume.
+Open `http://localhost:8502`. Confirm the container with `docker ps --filter name=ledgerlens` and
+stop it with `docker stop ledgerlens`. The named volume preserves only confirmed SQLite purchases
+across container replacement. Uploaded PDF bytes, unconfirmed drafts, API credentials, and
+session-cached narratives are not written to the volume.
 
-If port 8501 is already in use, replace `-p 127.0.0.1:8501:8501` with
-`-p 127.0.0.1:8502:8501` and open
-`http://localhost:8502`.
+If Docker reports `port is already allocated`, run `docker ps --filter publish=8502` to identify
+the process using the documented host port. Stop it only if it is your stale container, or rerun
+with `-p 127.0.0.1:8503:8501` and open `http://localhost:8503`. For a container-name conflict,
+inspect `docker ps -a --filter name=ledgerlens` before stopping or removing anything.
 
 ## Option B — Build from the public source repository
 

@@ -190,17 +190,20 @@ outside the current scope.
 
 ## Judge quickstart
 
-The following commands work unchanged in Windows PowerShell, Command Prompt, Bash, and zsh:
+The following commands work unchanged in Windows PowerShell, Command Prompt, Bash, and zsh. Host
+port 8502 avoids collisions with the usual local Streamlit port 8501:
 
 ```console
 docker pull alejandroromeroa/ledgerlens:buildweek-2026
 docker volume create ledgerlens-data
-docker run --rm --name ledgerlens -p 127.0.0.1:8501:8501 --mount "type=volume,source=ledgerlens-data,target=/app/runtime" --read-only --tmpfs "/tmp:rw,noexec,nosuid,size=64m" --cap-drop=ALL --security-opt=no-new-privileges:true --pids-limit=256 --memory=1g --cpus=2 alejandroromeroa/ledgerlens:buildweek-2026
+docker run -d --rm --name ledgerlens -p 127.0.0.1:8502:8501 --mount "type=volume,source=ledgerlens-data,target=/app/runtime" --read-only --tmpfs "/tmp:rw,noexec,nosuid,size=64m" --cap-drop=ALL --security-opt=no-new-privileges:true --pids-limit=256 --memory=1g --cpus=2 alejandroromeroa/ledgerlens:buildweek-2026
 ```
 
-Open `http://localhost:8501`, choose one of five bundled synthetic invoices, use Offline fixture
+Open `http://localhost:8502`, choose one of five bundled synthetic invoices, use Offline fixture
 extraction, confirm the purchase, and inspect Portfolio, Purchase history, Daily Lens, and Weekly
-Lens. Full instructions are in `docs/JUDGE_INSTRUCTIONS.md`.
+Lens. Stop it with `docker stop ledgerlens`. If port 8502 is occupied, inspect it with
+`docker ps --filter publish=8502` or use host port 8503. Full troubleshooting is in
+`docs/JUDGE_INSTRUCTIONS.md`.
 
 ## Verified release references
 

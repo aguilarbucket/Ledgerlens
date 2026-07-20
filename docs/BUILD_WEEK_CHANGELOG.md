@@ -463,3 +463,20 @@
   extracted source pack.
 - The hardened container returned HTTP 200 `ok` as UID 999. Docker Scout retained the accepted
   inherited findings while reporting zero fixable CVEs and zero application-layer findings.
+
+## 2026-07-20 — Conflict-resistant public quickstart
+
+### User validation
+
+- The public image pulled with the expected digest, but Docker correctly rejected the documented
+  `127.0.0.1:8501` binding because another local LedgerLens container already owned that port.
+- The failed start did not indicate an image, application, volume, or platform problem.
+
+### Documentation correction
+
+- Moved the published-image quickstart to host port 8502 while leaving the container's internal
+  Streamlit port at 8501.
+- Changed the quickstart to detached mode and documented explicit status and stop commands.
+- Added cross-platform diagnostics for both port-allocation and container-name conflicts, including
+  a safe port-8503 fallback that does not instruct users to stop unrelated containers.
+- Updated README, judge instructions, Docker Hub copy, and Devpost copy consistently.
