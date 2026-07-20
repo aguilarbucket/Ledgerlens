@@ -22,6 +22,7 @@ tracker. The earlier baseline and the new work are separated in
 
 - Source repository: [github.com/aguilarbucket/Ledgerlens](https://github.com/aguilarbucket/Ledgerlens)
 - Container repository: [alejandroromeroa/ledgerlens](https://hub.docker.com/r/alejandroromeroa/ledgerlens)
+- Demo video: [LedgerLens — OpenAI Build Week 2026](https://youtu.be/rTRH7bICqew)
 - Judge instructions: [`docs/JUDGE_INSTRUCTIONS.md`](docs/JUDGE_INSTRUCTIONS.md)
 - Demo video script: [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md)
 - Brand system: [`docs/BRANDING.md`](docs/BRANDING.md)

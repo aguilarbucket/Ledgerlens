@@ -34,7 +34,7 @@
 - [x] Official GitHub and Docker Hub targets are documented with exact judge commands.
 - [x] English project description finalized.
 - [x] Time-coded English demo script prepared for a target duration under three minutes.
-- [ ] Public demo video with audio is under three minutes.
+- [x] Public demo video with audio is under three minutes: https://youtu.be/rTRH7bICqew
 - [x] Repository is public with MIT licensing and accessible to judges.
 - [x] Public Docker image is versioned, pullable, and verified from the registry.
 - [x] README explains Codex, GPT-5.6, and human decisions.

@@ -1,6 +1,6 @@
 # Devpost submission draft
 
-Status: owner-approved submission copy. Only the public video URL remains intentionally blank.
+Status: owner-approved submission copy with the public demo video recorded.
 
 ## Project name
 
@@ -18,6 +18,7 @@ Apps for Your Life — Personal Finance
 
 - Source code: https://github.com/aguilarbucket/Ledgerlens
 - Container image: https://hub.docker.com/r/alejandroromeroa/ledgerlens
+- Demo video: https://youtu.be/rTRH7bICqew
 - Stable judge image: `alejandroromeroa/ledgerlens:buildweek-2026`
 - License: MIT
 
@@ -215,9 +216,10 @@ Lens. Stop it with `docker stop ledgerlens`. If port 8502 is occupied, inspect i
 - Verified public source revision:
   `a1548583e96390c45a59c991cb9392454c34a0a9`
 
-## Pending submission fields
+## Submission references
 
-- Public YouTube video URL: `[PENDING]`
+- Public YouTube video URL: https://youtu.be/rTRH7bICqew
+- Verified duration: 2 minutes 51 seconds.
 - Majority-work Codex Session ID from `/feedback`:
   `019f774d-149c-78e2-b363-28a6ba9205f9`
 - Owner approval of this English submission copy: approved on 2026-07-19.
