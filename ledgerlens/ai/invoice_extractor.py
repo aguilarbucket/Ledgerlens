@@ -5,7 +5,7 @@ from typing import Protocol
 from ledgerlens.ai.openai_client import OpenAIResponsesClient
 from ledgerlens.invoices.models import FieldConfidence, InvoiceExtraction
 from ledgerlens.invoices.pdf_validation import ValidatedPDF
-from sample_data.invoice_catalog import invoice_spec_for_filename
+from sample_data.invoice_catalog import invoice_spec_for_sha256
 
 INVOICE_EXTRACTION_INSTRUCTIONS = """
 Extract only the purchase fields represented by the response schema from this brokerage invoice.
@@ -25,11 +25,12 @@ class FixtureInvoiceExtractor:
     source_name = "synthetic_fixture"
 
     def extract(self, pdf: ValidatedPDF) -> InvoiceExtraction:
-        spec = invoice_spec_for_filename(pdf.filename)
+        spec = invoice_spec_for_sha256(pdf.sha256)
         if spec is None:
             raise ValueError(
-                "Offline fixture extraction supports only the five bundled synthetic invoice "
-                "filenames. Use a bundled sample or select OpenAI Responses API."
+                "Offline fixture extraction accepts only the unchanged contents of the five "
+                "bundled synthetic invoices. Download and upload a bundled sample, or select "
+                "OpenAI Responses API."
             )
         return InvoiceExtraction(
             company=spec.company,

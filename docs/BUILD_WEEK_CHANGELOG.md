@@ -480,3 +480,28 @@
 - Added cross-platform diagnostics for both port-allocation and container-name conflicts, including
   a safe port-8503 fallback that does not instruct users to stop unrelated containers.
 - Updated README, judge instructions, Docker Hub copy, and Devpost copy consistently.
+
+## 2026-07-20 — Browser-safe offline fixture recognition
+
+### User validation
+
+- Browser downloads preserved the exact bytes of bundled synthetic PDFs but appended suffixes such
+  as `-1` when a same-named file already existed locally.
+- Offline extraction rejected those legitimate copies because it recognized fixtures only by their
+  upload filename, even though their SHA-256 values matched the bundled samples.
+
+### Correction
+
+- Changed offline fixture resolution from filename matching to SHA-256 matching against the five
+  PDFs packaged with LedgerLens.
+- Renamed copies of an unchanged bundled invoice now extract deterministically, while modified or
+  unrelated PDF content remains rejected even when it uses a known filename.
+- Added regression coverage for both the browser-renamed success path and the changed-content
+  rejection boundary.
+
+### Validation
+
+- All three browser-renamed PDFs observed in the user workflow resolved to their correct platforms
+  and document references through their packaged-content SHA-256 values.
+- The complete suite passes with 89 tests; Ruff, compilation, diff checks, and Streamlit AppTest
+  also pass with zero application exceptions and seven top-level/nested tabs.

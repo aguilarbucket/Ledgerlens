@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass
 from datetime import date
+from functools import lru_cache
 from pathlib import Path
 
 
@@ -83,11 +85,19 @@ SYNTHETIC_INVOICES = (
 )
 
 DEFAULT_SYNTHETIC_INVOICE = SYNTHETIC_INVOICES[0]
+BUNDLED_INVOICE_DIRECTORY = Path(__file__).resolve().parents[1] / "output" / "pdf"
 
 
-def invoice_spec_for_filename(filename: str) -> SyntheticInvoiceSpec | None:
-    safe_name = Path(filename).name.casefold()
-    return next(
-        (spec for spec in SYNTHETIC_INVOICES if spec.filename.casefold() == safe_name),
-        None,
-    )
+@lru_cache(maxsize=1)
+def _invoice_specs_by_sha256() -> dict[str, SyntheticInvoiceSpec]:
+    specs_by_sha256: dict[str, SyntheticInvoiceSpec] = {}
+    for spec in SYNTHETIC_INVOICES:
+        pdf_path = BUNDLED_INVOICE_DIRECTORY / spec.filename
+        if pdf_path.is_file():
+            digest = hashlib.sha256(pdf_path.read_bytes()).hexdigest()
+            specs_by_sha256[digest] = spec
+    return specs_by_sha256
+
+
+def invoice_spec_for_sha256(sha256: str) -> SyntheticInvoiceSpec | None:
+    return _invoice_specs_by_sha256().get(sha256.strip().casefold())

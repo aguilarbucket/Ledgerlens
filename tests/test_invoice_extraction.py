@@ -1,3 +1,4 @@
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
@@ -11,10 +12,18 @@ from ledgerlens.invoices.pdf_validation import validate_pdf
 from sample_data.invoice_catalog import DEFAULT_SYNTHETIC_INVOICE, SYNTHETIC_INVOICES
 
 VALID_PDF = b"%PDF-1.4\nsynthetic content\n%%EOF\n"
+INVOICE_DIRECTORY = Path(__file__).resolve().parents[1] / "output" / "pdf"
 
 
-def validated_pdf(filename: str = DEFAULT_SYNTHETIC_INVOICE.filename):
-    return validate_pdf(filename=filename, mime_type="application/pdf", content=VALID_PDF)
+def validated_pdf(
+    filename: str = DEFAULT_SYNTHETIC_INVOICE.filename,
+    *,
+    source_filename: str | None = None,
+    content: bytes | None = None,
+):
+    if content is None:
+        content = (INVOICE_DIRECTORY / (source_filename or filename)).read_bytes()
+    return validate_pdf(filename=filename, mime_type="application/pdf", content=content)
 
 
 def test_synthetic_invoice_catalog_has_five_distinct_transactions() -> None:
@@ -38,9 +47,23 @@ def test_fixture_extracts_each_bundled_synthetic_invoice(spec) -> None:
     assert extraction.document_reference == spec.document_reference
 
 
-def test_fixture_rejects_unknown_pdf_filename() -> None:
-    with pytest.raises(ValueError, match="five bundled synthetic invoice"):
-        FixtureInvoiceExtractor().extract(validated_pdf("renamed-invoice.pdf"))
+def test_fixture_accepts_browser_renamed_bundled_invoice() -> None:
+    extraction = FixtureInvoiceExtractor().extract(
+        validated_pdf(
+            "ledgerlens_synthetic_invoice-1.pdf",
+            source_filename=DEFAULT_SYNTHETIC_INVOICE.filename,
+        )
+    )
+
+    assert extraction.document_reference == DEFAULT_SYNTHETIC_INVOICE.document_reference
+    assert extraction.platform == DEFAULT_SYNTHETIC_INVOICE.platform
+
+
+def test_fixture_rejects_modified_or_unknown_pdf_content() -> None:
+    with pytest.raises(ValueError, match="unchanged contents"):
+        FixtureInvoiceExtractor().extract(
+            validated_pdf(DEFAULT_SYNTHETIC_INVOICE.filename, content=VALID_PDF)
+        )
 
 
 def test_fixture_extraction_requires_human_confirmation() -> None:
