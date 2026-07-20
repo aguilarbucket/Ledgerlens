@@ -133,7 +133,7 @@ surface. A hardened runtime reached healthy state, returned HTTP 200 `ok`, and r
 Docker Scout reported the same inherited base-image totals, zero fixable CVEs, and zero CVEs in the
 LedgerLens application layer.
 
-## Current branding and Project public container verification
+## Branding and Project public container verification (superseded)
 
 The branded Project release was built from Git commit `89800d2` and published as `latest`,
 `buildweek-2026`, and immutable tag `89800d2`. Docker Hub reports manifest digest
@@ -148,3 +148,21 @@ lockup and four-step workflow, and verified both public links. The hardened runt
 
 Docker Scout indexed 197 packages, retained the documented inherited base-image totals, reported
 zero fixable CVEs, and reported zero CVEs attributable to the LedgerLens application layer.
+
+## Current browser-safe fixture public container verification
+
+The browser-safe offline fixture release was built from Git commit `a154858` and published as
+`latest`, `buildweek-2026`, and immutable tag `a154858`. Docker Hub reports manifest digest
+`sha256:890e87740ff4372082ef34d0f26565f5f79b13c7b7485d1439093d98a77846d1` for all
+three tags on `linux/amd64`; a cache-independent pull confirmed the complete OCI revision.
+
+The exact browser-renamed user file `ledgerlens_synthetic_invoice-1.pdf` resolved to Corredora Demo
+and `SYNTH-BW-2026-005` from the pulled image even though its upload filename differs from the
+packaged source filename. A same-named PDF with different content remained rejected. The running
+public container retained the named volume, reached healthy state, returned HTTP 200 `ok`, ran as
+the unprivileged `ledgerlens` user, and kept the documented read-only and capability-free runtime.
+
+The source suite passes with 89 tests; Ruff, compilation, diff checks, and Streamlit AppTest pass
+with zero application exceptions and seven top-level/nested tabs. Docker Scout indexed 197
+packages, retained the documented inherited base-image totals, reported zero fixable CVEs, and
+reported zero CVEs attributable to the LedgerLens application layer.

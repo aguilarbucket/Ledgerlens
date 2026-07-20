@@ -207,13 +207,13 @@ Lens. Stop it with `docker stop ledgerlens`. If port 8502 is occupied, inspect i
 
 ## Verified release references
 
-- Public application source revision: `89800d2`
-- Current release tags: `latest`, `buildweek-2026`, `89800d2`
+- Public application source revision: `a154858`
+- Current release tags: `latest`, `buildweek-2026`, `a154858`
 - Public image platform: `linux/amd64`
 - Public image manifest digest:
-  `sha256:19d80fdf70625c20d9a28e49e936ad9a9f950bd27d07651ed526f07d797ef6b6`
+  `sha256:890e87740ff4372082ef34d0f26565f5f79b13c7b7485d1439093d98a77846d1`
 - Verified public source revision:
-  `89800d29b6b7923d521d6ed4c892d3473541fef8`
+  `a1548583e96390c45a59c991cb9392454c34a0a9`
 
 ## Pending submission fields
 

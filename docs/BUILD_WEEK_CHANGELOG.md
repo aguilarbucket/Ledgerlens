@@ -505,3 +505,16 @@
   and document references through their packaged-content SHA-256 values.
 - The complete suite passes with 89 tests; Ruff, compilation, diff checks, and Streamlit AppTest
   also pass with zero application exceptions and seven top-level/nested tabs.
+
+### Public release
+
+- Published application commit `a154858` as Docker tags `latest`, `buildweek-2026`, and immutable
+  tag `a154858`; all three resolve to manifest digest
+  `sha256:890e87740ff4372082ef34d0f26565f5f79b13c7b7485d1439093d98a77846d1` on
+  `linux/amd64`.
+- A cache-independent pull confirmed the OCI revision and successfully extracted the exact
+  browser-renamed PDF from the user workflow.
+- The public container replaced the preceding release while preserving `ledgerlens-data`, reached
+  HTTP 200 `ok` on host port 8502, and runs with the documented hardened controls.
+- Docker Scout retained the accepted inherited base-image totals, reported zero fixable CVEs, and
+  reported zero findings attributable to the LedgerLens application layer.
